@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    compileSdk = 32
+    compileSdk = 31
     defaultConfig {
         applicationId = "ru.nightgoat.kmmflickr.android"
         minSdk = 21
-        targetSdk = 32
+        targetSdk = 31
         versionCode = 1
         versionName = "1.0"
     }
@@ -21,15 +21,25 @@ android {
     buildFeatures {
         compose = true
     }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = config.Versions.compose
+    }
 }
 
 dependencies {
     implementation(project(":shared"))
-    implementation("com.google.android.material:material:1.4.0")
-    implementation("androidx.appcompat:appcompat:1.4.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.2")
+    implementation(kotlin("stdlib-jdk8", config.Versions.kotlin))
+    api(config.Libs.Compose.ui)
+    api(config.Libs.Compose.material)
+    api(config.Libs.Compose.tooling)
+    api(config.Libs.Compose.activity)
+    api(config.Libs.Compose.navigation)
+    api(config.Libs.Compose.viewModel)
+    api(config.Libs.Compose.runtime)
+    api(config.Libs.Compose.coil)
 
-    val kotlinCoroutines = "1.5.0"
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutines")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinCoroutines")
+    api(config.Libs.Core.appCompat)
+    api(config.Libs.Core.material)
+    api(config.Libs.Common.coroutines)
 }

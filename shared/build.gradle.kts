@@ -1,5 +1,6 @@
 plugins {
     kotlin("multiplatform")
+    kotlin("plugin.serialization") version "1.5.0"
     id("com.android.library")
 }
 
@@ -18,10 +19,17 @@ kotlin {
 
     sourceSets {
         val ktorVersion = "1.6.7"
+        val napierVersion = "2.2.0"
+        val koinVersion = "3.1.4"
 
         val commonMain by getting {
             dependencies {
                 implementation("io.ktor:ktor-client-core:$ktorVersion")
+                implementation("io.ktor:ktor-client-serialization:$ktorVersion")
+                implementation("org.jetbrains.kotlin:kotlin-reflect:${config.Versions.kotlin}")
+                implementation("io.ktor:ktor-client-logging:$ktorVersion")
+                implementation("io.github.aakira:napier:$napierVersion")
+                implementation("io.insert-koin:koin-core:$koinVersion")
             }
         }
         val commonTest by getting {

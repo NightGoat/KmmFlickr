@@ -35,6 +35,7 @@ data class PhotoModel(
 ) : IConvertable<PhotoUi> {
     override fun convert() = url?.run {
         PhotoUi(
+            model = this@PhotoModel,
             url = Url(this),
             description = title.orEmpty(),
             width = width ?: 0,

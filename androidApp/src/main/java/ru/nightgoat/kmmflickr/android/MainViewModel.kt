@@ -10,6 +10,11 @@ class MainViewModel : ViewModel() {
 
     val screenState = MutableStateFlow<MainScreenState>(MainScreenState.Loading)
 
+    val currentStateValue
+        get() = screenState.value
+
+    val searchTextInput = MutableStateFlow("")
+
     init {
         startLoading()
     }
@@ -22,9 +27,13 @@ class MainViewModel : ViewModel() {
             }.onSuccess {
                 MainScreenState.Images(listOf(it)).setToScreen()
             }.onFailure {
-                MainScreenState.Error(it).setToScreen()
+                MainScreenState.Error(it.localizedMessage.orEmpty()).setToScreen()
             }
         }
+    }
+
+    fun changeSearchTextInput(newText: String) {
+        searchTextInput.value = newText
     }
 
     private fun MainScreenState.setToScreen() {

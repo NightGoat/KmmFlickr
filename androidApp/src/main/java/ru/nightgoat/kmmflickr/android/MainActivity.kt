@@ -14,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.nightgoat.kmmflickr.android.presentation.SearchTextField
@@ -28,11 +29,16 @@ class MainActivity : ComponentActivity() {
         setContent {
             val state by viewModel.screenState.collectAsState()
             val searchText by viewModel.searchTextInput.collectAsState()
+            val currentFocus = LocalFocusManager.current
             MainComposable(
                 state = state,
                 searchTextInput = searchText,
                 onSearchTextInputChange = {
                     viewModel.changeSearchTextInput(it)
+                },
+                onSearchClick = {
+                    viewModel.search()
+                    currentFocus.clearFocus()
                 }
             )
         }
@@ -84,10 +90,6 @@ private fun ReduceState(state: MainScreenState) {
         is MainScreenState.Loading -> CircularProgressIndicator()
         is MainScreenState.Error -> Text(state.errorMessage)
         is MainScreenState.Images -> VerticalGallery(urls = state.list)
-        is MainScreenState.Test -> VerticalGallery(
-            urls = List(5) { "" },
-            isTest = true
-        )
     }
 }
 

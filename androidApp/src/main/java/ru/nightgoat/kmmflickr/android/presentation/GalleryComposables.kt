@@ -9,20 +9,19 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
-import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import coil.size.OriginalSize
 import ru.nightgoat.kmmflickr.android.R
+import ru.nightgoat.kmmflickr.models.ui.PhotoUi
 
 
 @Composable
-fun VerticalGallery(urls: List<String>, isTest: Boolean = false) {
+fun VerticalGallery(urls: List<PhotoUi>, isTest: Boolean = false) {
     LazyColumn(modifier = Modifier.fillMaxWidth()) {
         items(urls) { url ->
-            GalleryImage(url, isTest)
+            GalleryImage(url)
         }
     }
 }
@@ -30,40 +29,24 @@ fun VerticalGallery(urls: List<String>, isTest: Boolean = false) {
 // TODO: 18.12.2021 change url to object that contains url and description
 @OptIn(ExperimentalCoilApi::class)
 @Composable
-fun GalleryImage(url: String, isTest: Boolean) {
-    if (isTest) {
-        Image(
-            painter = painterResource(id = R.drawable.court),
-            contentDescription = null,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            contentScale = ContentScale.FillWidth,
+fun GalleryImage(photo: PhotoUi) {
+    val painter =
+        rememberImagePainter(
+            data = photo.url.link,
+            builder = {
+                size(OriginalSize)
+                placeholder(R.drawable.image_placeholder)
+            },
         )
-    } else {
-        val painter =
-            rememberImagePainter(
-                data = url,
-                builder = {
-                    size(OriginalSize)
-                    placeholder(R.drawable.court)
-                },
+    Image(
+        modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(
+                photo.aspectRatio
             )
-        Image(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp)
-                .then(
-                    (painter.state as? ImagePainter.State.Success)
-                        ?.painter
-                        ?.intrinsicSize
-                        ?.let { intrinsicSize ->
-                            Modifier.aspectRatio(intrinsicSize.width / intrinsicSize.height)
-                        } ?: Modifier
-                ),
-            painter = painter,
-            contentScale = ContentScale.FillWidth,
-            contentDescription = null,
-        )
-    }
+            .padding(bottom = 8.dp),
+        painter = painter,
+        contentScale = ContentScale.FillWidth,
+        contentDescription = null,
+    )
 }

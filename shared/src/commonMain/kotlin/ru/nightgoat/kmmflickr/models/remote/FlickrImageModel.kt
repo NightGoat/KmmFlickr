@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class FlickrImageModel(
     @SerialName("photos")
-    val photos: PhotosModel?,
+    val photos: PhotosModel? = null,
     @SerialName("stat")
-    val stat: String?
+    val stat: String? = null
 )

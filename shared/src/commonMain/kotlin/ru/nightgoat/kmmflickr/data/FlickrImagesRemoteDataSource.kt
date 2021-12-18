@@ -6,7 +6,24 @@ import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.features.logging.*
 import io.ktor.client.request.*
-import ru.nightgoat.kmmflickr.core.IRemoteDataSource
+import ru.nightgoat.kmmflickr.core.base.IRemoteDataSource
+import ru.nightgoat.kmmflickr.core.constants.FlickrApiConstants.API_KEY
+import ru.nightgoat.kmmflickr.core.constants.FlickrApiConstants.API_KEY_PARAM
+import ru.nightgoat.kmmflickr.core.constants.FlickrApiConstants.BASE_URL
+import ru.nightgoat.kmmflickr.core.constants.FlickrApiConstants.CALLBACK_PARAM
+import ru.nightgoat.kmmflickr.core.constants.FlickrApiConstants.EXTRAS_PARAM
+import ru.nightgoat.kmmflickr.core.constants.FlickrApiConstants.FORMAT_PARAM
+import ru.nightgoat.kmmflickr.core.constants.FlickrApiConstants.FORMAT_VALUE
+import ru.nightgoat.kmmflickr.core.constants.FlickrApiConstants.MEDIA_EXTRAS_VALUE
+import ru.nightgoat.kmmflickr.core.constants.FlickrApiConstants.METHOD_PARAM
+import ru.nightgoat.kmmflickr.core.constants.FlickrApiConstants.METHOD_VALUE
+import ru.nightgoat.kmmflickr.core.constants.FlickrApiConstants.NO_JSON_CALLBACK_PARAM
+import ru.nightgoat.kmmflickr.core.constants.FlickrApiConstants.PAGE_PARAM
+import ru.nightgoat.kmmflickr.core.constants.FlickrApiConstants.PER_PAGE_PARAM
+import ru.nightgoat.kmmflickr.core.constants.FlickrApiConstants.TAGS_PARAM
+import ru.nightgoat.kmmflickr.core.constants.FlickrApiConstants.URL_M_EXTRAS_VALUE
+import ru.nightgoat.kmmflickr.core.constants.FlickrApiConstants.URL_SQ_EXTRAS_VALUE
+import ru.nightgoat.kmmflickr.core.extensions.parametersOf
 import ru.nightgoat.kmmflickr.initLogger
 import ru.nightgoat.kmmflickr.models.remote.FlickrImageModel
 
@@ -25,23 +42,38 @@ class FlickrImagesRemoteDataSource : ImagesRemoteDataSource {
         }
     }.also { initLogger() }
 
-    override suspend fun getPhotos(tag: String): FlickrImageModel {
-        return httpClient.get("https://api.flickr.com/services/rest?") {
-            parameter("api_key", "98c37f47eba0d8dd2db12c2207eb39c8")
-            parameter("method", "flickr.photos.search")
-            parameter("tags", tag)
-            parameter("format", "json")
-            parameter("nojsoncallback", "true")
-            parameter("callback", "true")
-            parameter("extras", "media")
-            parameter("extras", "url_sq")
-            parameter("extras", "url_m")
-            parameter("per_page", "20")
-            parameter("page", "1")
+    override suspend fun getPhotos(
+        tag: String,
+        pages: Int,
+        page: Int
+    ): FlickrImageModel {
+        return httpClient.get(BASE_URL) {
+            parametersOf(
+                API_KEY_PARAM to API_KEY,
+                METHOD_PARAM to METHOD_VALUE,
+                TAGS_PARAM to tag,
+                FORMAT_PARAM to FORMAT_VALUE,
+                NO_JSON_CALLBACK_PARAM to true.toString(),
+                CALLBACK_PARAM to true.toString(),
+                EXTRAS_PARAM to MEDIA_EXTRAS_VALUE,
+                EXTRAS_PARAM to URL_SQ_EXTRAS_VALUE,
+                EXTRAS_PARAM to URL_M_EXTRAS_VALUE,
+                PER_PAGE_PARAM to pages.toString(),
+                PAGE_PARAM to page.toString()
+            )
         }
     }
 }
 
 interface ImagesRemoteDataSource : IRemoteDataSource {
-    suspend fun getPhotos(tag: String = "Electrolux"): FlickrImageModel
+    suspend fun getPhotos(
+        tag: String,
+        pages: Int = DEFAULT_PAGES_QUANTITY,
+        page: Int = DEFAULT_PAGE
+    ): FlickrImageModel
+
+    companion object {
+        const val DEFAULT_PAGES_QUANTITY = 20
+        const val DEFAULT_PAGE = 1
+    }
 }

@@ -4,7 +4,7 @@ import ru.nightgoat.kmmflickr.models.util.Url
 
 data class PhotoUi(
     val url: Url,
-    val title: String,
+    val description: String,
     val width: Int,
     val height: Int
 ) {
@@ -13,8 +13,11 @@ data class PhotoUi(
             return if (height != 0) {
                 width.toFloat() / height
             } else {
-                3.toFloat() / 4
+                DEFAULT_ASPECT_RATIO
             }
         }
 
+    companion object {
+        const val DEFAULT_ASPECT_RATIO = 0.75f
+    }
 }

@@ -1,6 +1,6 @@
 package ru.nightgoat.kmmflickr.domain
 
-import ru.nightgoat.kmmflickr.core.IUseCase
+import ru.nightgoat.kmmflickr.core.base.IUseCase
 import ru.nightgoat.kmmflickr.data.IImagesRepository
 import ru.nightgoat.kmmflickr.models.ui.PhotoUi
 

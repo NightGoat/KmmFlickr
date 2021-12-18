@@ -16,10 +16,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import ru.nightgoat.kmmflickr.android.presentation.SearchTextField
 import ru.nightgoat.kmmflickr.android.presentation.SimpleSpacer
 import ru.nightgoat.kmmflickr.android.presentation.VerticalGallery
+import ru.nightgoat.kmmflickr.android.presentation.defaultPadding
+import ru.nightgoat.kmmflickr.models.ui.PhotoUi
+import ru.nightgoat.kmmflickr.models.util.Url
 
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
@@ -63,7 +65,7 @@ fun MainComposable(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(8.dp)
+                    .padding(defaultPadding)
             ) {
                 SearchTextField(
                     textInput = searchTextInput,
@@ -71,7 +73,7 @@ fun MainComposable(
                     onTextInputChange = onSearchTextInputChange,
                     onSearchClick = onSearchClick
                 )
-                SimpleSpacer(size = 8)
+                SimpleSpacer(defaultPadding)
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -97,6 +99,14 @@ private fun ReduceState(state: MainScreenState) {
 @Preview
 @Composable
 private fun MainComposablePreview() {
-    val state = MainScreenState.Test
+    val photos = List(5) {
+        PhotoUi(
+            url = Url(link = "https://upload.wikimedia.org/wikipedia/commons/c/c4/Surrogate%27s_Court_Splendor.jpg"),
+            description = "",
+            width = 300,
+            height = 400
+        )
+    }
+    val state = MainScreenState.Images(photos)
     MainComposable(state = state)
 }

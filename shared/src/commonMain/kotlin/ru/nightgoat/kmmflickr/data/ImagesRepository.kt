@@ -1,7 +1,7 @@
 package ru.nightgoat.kmmflickr.data
 
-import ru.nightgoat.kmmflickr.core.IRemoteRepository
-import ru.nightgoat.kmmflickr.core.convert
+import ru.nightgoat.kmmflickr.core.base.IRemoteRepository
+import ru.nightgoat.kmmflickr.core.base.convert
 import ru.nightgoat.kmmflickr.models.ui.PhotoUi
 
 class ImagesRepository(override val remoteDataSource: ImagesRemoteDataSource) :

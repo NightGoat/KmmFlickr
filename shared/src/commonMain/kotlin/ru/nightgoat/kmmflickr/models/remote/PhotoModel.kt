@@ -2,30 +2,30 @@ package ru.nightgoat.kmmflickr.models.remote
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import ru.nightgoat.kmmflickr.core.IConvertable
+import ru.nightgoat.kmmflickr.core.base.IConvertable
 import ru.nightgoat.kmmflickr.models.ui.PhotoUi
 import ru.nightgoat.kmmflickr.models.util.Url
 
 @Serializable
 data class PhotoModel(
     @SerialName("farm")
-    val farm: Int?,
+    val farm: Int? = null,
     @SerialName("id")
-    val id: String?,
+    val id: String? = null,
     @SerialName("isfamily")
-    val isFamily: Int?,
+    val isFamily: Int? = null,
     @SerialName("isfriend")
-    val isFriend: Int?,
+    val isFriend: Int? = null,
     @SerialName("ispublic")
-    val isPublic: Int?,
+    val isPublic: Int? = null,
     @SerialName("owner")
-    val owner: String?,
+    val owner: String? = null,
     @SerialName("secret")
-    val secret: String?,
+    val secret: String? = null,
     @SerialName("server")
-    val server: String?,
+    val server: String? = null,
     @SerialName("title")
-    val title: String?,
+    val title: String? = null,
     @SerialName("url_m")
     val url: String? = null,
     @SerialName("height_m")
@@ -36,7 +36,7 @@ data class PhotoModel(
     override fun convert() = url?.run {
         PhotoUi(
             url = Url(this),
-            title = title.orEmpty(),
+            description = title.orEmpty(),
             width = width ?: 0,
             height = height ?: 0
         )

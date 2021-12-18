@@ -7,13 +7,13 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PhotosModel(
     @SerialName("page")
-    val page: Int?,
+    val page: Int? = null,
     @SerialName("pages")
-    val pages: Int?,
+    val pages: Int? = null,
     @SerialName("perpage")
-    val perPage: Int?,
+    val perPage: Int? = null,
     @SerialName("photo")
-    val photos: List<PhotoModel>?,
+    val photos: List<PhotoModel>? = null,
     @SerialName("total")
-    val total: Int?
+    val total: Int? = null
 )

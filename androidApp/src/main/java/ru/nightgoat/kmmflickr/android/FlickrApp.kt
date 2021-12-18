@@ -16,7 +16,9 @@ class FlickrApp : Application() {
 
     private fun initKoin() {
         startKoin {
-            if (BuildConfig.DEBUG) androidLogger(Level.ERROR)
+            if (BuildConfig.DEBUG) {
+                androidLogger(Level.ERROR)
+            }
             androidContext(this@FlickrApp)
             modules(imageModules)
         }

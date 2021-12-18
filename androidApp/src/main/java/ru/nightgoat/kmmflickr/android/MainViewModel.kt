@@ -12,9 +12,6 @@ class MainViewModel : ViewModel(), KoinComponent {
 
     val screenState = MutableStateFlow<MainScreenState>(MainScreenState.Loading)
 
-    val currentStateValue
-        get() = screenState.value
-
     val getImagesUseCase: IGetImagesUseCase by inject()
 
     val searchTextInput = MutableStateFlow("Electrolux")
@@ -30,7 +27,8 @@ class MainViewModel : ViewModel(), KoinComponent {
     fun search() {
         viewModelScope.launch {
             MainScreenState.Loading.setToScreen()
-            getImagesUseCase(searchTextInput.value).onSuccess {
+            val searchText = searchTextInput.value
+            getImagesUseCase(searchText).onSuccess {
                 MainScreenState.Images(it).setToScreen()
             }.onFailure {
                 MainScreenState.Error(it.localizedMessage.orEmpty()).setToScreen()

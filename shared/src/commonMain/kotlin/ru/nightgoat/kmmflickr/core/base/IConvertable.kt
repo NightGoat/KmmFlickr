@@ -1,4 +1,4 @@
-package ru.nightgoat.kmmflickr.core
+package ru.nightgoat.kmmflickr.core.base
 
 interface IConvertable<T> {
     fun convert(): T?

@@ -29,6 +29,11 @@ object Libs {
         const val coil = "io.coil-kt:coil-compose:${Versions.coil}"
     }
 
+    object DI {
+        const val koinCore = "io.insert-koin:koin-core:${Versions.koin}"
+        const val koinAndroid = "io.insert-koin:koin-android:${Versions.koin}"
+    }
+
     object Accompanist {
         const val swiperefresh =
             "com.google.accompanist:accompanist-swiperefresh:${Versions.accompanist}"

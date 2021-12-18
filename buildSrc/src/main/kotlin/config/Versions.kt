@@ -18,5 +18,6 @@ object Versions {
     const val coil = "1.4.0"
 
     const val accompanist = "0.20.2"
+    const val koin = "3.1.2"
 
 }

@@ -28,4 +28,19 @@ object RussianDictionary : IDictionary {
     override val clearTextButton: String by lazy {
         "Кнопка очистки текста"
     }
+    override val download: String by lazy {
+        "Скачать"
+    }
+    override val back: String by lazy {
+        "Назад"
+    }
+    override val owner: String by lazy {
+        "Владелец"
+    }
+    override val height: String by lazy {
+        "Высота"
+    }
+    override val width: String by lazy {
+        "Ширина"
+    }
 }

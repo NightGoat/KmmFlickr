@@ -40,6 +40,7 @@ data class PhotoModel(
             model = this@PhotoModel,
             url = Url(this),
             description = title.orEmpty(),
+            owner = owner.orEmpty(),
             width = width ?: 0,
             height = height ?: 0
         )

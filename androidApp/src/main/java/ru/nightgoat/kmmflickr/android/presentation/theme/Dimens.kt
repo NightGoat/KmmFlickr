@@ -4,3 +4,5 @@ import androidx.compose.ui.unit.dp
 
 val defaultPadding = 8.dp
 val defaultMediumPadding = 16.dp
+
+val defaultButtonSize = 46.dp

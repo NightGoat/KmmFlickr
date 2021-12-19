@@ -7,11 +7,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -24,9 +24,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import ru.nightgoat.kmmflickr.android.presentation.*
 import ru.nightgoat.kmmflickr.android.presentation.theme.FlickrTheme
-import ru.nightgoat.kmmflickr.models.remote.PhotoModel
 import ru.nightgoat.kmmflickr.models.ui.PhotoUi
-import ru.nightgoat.kmmflickr.models.util.Url
 import ru.nightgoat.kmmflickr.providers.strings.StringProvider
 import ru.nightgoat.kmmflickr.providers.strings.stringDictionary
 import java.util.*
@@ -116,15 +114,18 @@ private fun MainComposable(
             }
 
             when (sideEffect) {
-                is MainSideEffect.SaveImage -> SaveImageDialog(onCancelSave) {
-                    onSaveClick(sideEffect.photoUi)
+                is MainSideEffect.ShowImageDescription -> {
+                    val photo = sideEffect.photoUi
+                    ImageDescription(photo, onCancelSave) {
+                        onSaveClick(photo)
+                    }
                 }
                 is MainSideEffect.Toast -> LaunchedEffect(sideEffect) {
                     Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
                 }
                 is MainSideEffect.SnackBar -> SnackBarWithActionOnBottom(
                     text = sideEffect.message,
-                    actionText = stringDictionary.searchHint,
+                    actionText = stringDictionary.retry,
                     onActionClick = sideEffect.onAction
                 )
                 MainSideEffect.Empty -> Unit
@@ -132,38 +133,6 @@ private fun MainComposable(
         }
     }
 
-}
-
-@Composable
-private fun SaveImageDialog(onCancelSave: () -> Unit, onSaveClick: () -> Unit) {
-    AlertDialog(
-        onDismissRequest = onCancelSave,
-        buttons = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(defaultPadding)
-            ) {
-                Button(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(end = defaultPadding),
-                    onClick = onCancelSave
-                ) {
-                    Text(stringDictionary.no)
-                }
-                Button(
-                    modifier = Modifier.weight(1f),
-                    onClick = onSaveClick
-                ) {
-                    Text(stringDictionary.yes)
-                }
-            }
-        },
-        text = {
-            Text(stringDictionary.saveImageQuestion)
-        },
-    )
 }
 
 @Composable
@@ -181,13 +150,7 @@ private fun MainState(state: MainScreenState, onCardClick: (String) -> Unit) {
 @Composable
 private fun MainComposablePreview() {
     val photos = List(5) {
-        PhotoUi(
-            model = PhotoModel(),
-            url = Url(link = "there is no need in this"),
-            description = "",
-            width = 300,
-            height = 400
-        )
+        PhotoUi.fake
     }
     val state = MainScreenState.Images(photos)
     val sideEffect = MainSideEffect.Empty

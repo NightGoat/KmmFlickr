@@ -28,4 +28,19 @@ object EnglishDictionary : IDictionary {
     override val clearTextButton: String by lazy {
         "Clear text button"
     }
+    override val download: String by lazy {
+        "Download"
+    }
+    override val back: String by lazy {
+        "Back"
+    }
+    override val owner: String by lazy {
+        "Owner"
+    }
+    override val height: String by lazy {
+        "Height"
+    }
+    override val width: String by lazy {
+        "Width"
+    }
 }

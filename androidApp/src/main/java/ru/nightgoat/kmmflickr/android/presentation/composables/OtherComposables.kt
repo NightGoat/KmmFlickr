@@ -8,6 +8,6 @@ import androidx.compose.ui.unit.Dp
 
 
 @Composable
-fun SimpleSpacer(size: Dp) {
+fun SimpleSpacer(size: Dp = defaultPadding) {
     Spacer(modifier = Modifier.size(size))
 }

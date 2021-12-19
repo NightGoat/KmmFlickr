@@ -8,7 +8,8 @@ data class PhotoUi(
     val url: Url,
     val description: String,
     val width: Int,
-    val height: Int
+    val height: Int,
+    val owner: String
 ) {
     val id
         get() = model.id.orEmpty()
@@ -25,5 +26,15 @@ data class PhotoUi(
 
     companion object {
         const val DEFAULT_ASPECT_RATIO = 0.75f
+        val fake = PhotoUi(
+            model = PhotoModel(
+                id = "123"
+            ),
+            url = Url(link = "http://example.com/123.jpg"),
+            description = "Hello world",
+            width = 100,
+            height = 2000,
+            owner = "No one"
+        )
     }
 }

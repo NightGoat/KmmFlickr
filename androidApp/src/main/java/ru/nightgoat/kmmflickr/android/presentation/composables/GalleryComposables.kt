@@ -16,9 +16,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.rememberImagePainter
 import ru.nightgoat.kmmflickr.android.R
-import ru.nightgoat.kmmflickr.models.remote.PhotoModel
 import ru.nightgoat.kmmflickr.models.ui.PhotoUi
-import ru.nightgoat.kmmflickr.models.util.Url
 
 
 @Composable
@@ -66,12 +64,6 @@ fun GalleryImage(photo: PhotoUi, onPhotoClick: (String) -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun GalleryImagePreview() {
-    GalleryImage(photo = PhotoUi(
-        model = PhotoModel(),
-        url = Url(link = "sdad"),
-        description = "Hello world",
-        width = 0,
-        height = 0
-    ), onPhotoClick = {}
+    GalleryImage(photo = PhotoUi.fake, onPhotoClick = {}
     )
 }

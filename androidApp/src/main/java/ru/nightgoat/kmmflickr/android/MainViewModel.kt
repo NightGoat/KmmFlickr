@@ -71,7 +71,7 @@ class MainViewModel : ViewModel(), KoinComponent {
             photos.find { photo ->
                 photo.id == cardId
             }?.let { photo ->
-                MainSideEffect.SaveImage(photo).reduce()
+                MainSideEffect.ShowImageDescription(photo).reduce()
             }
         }
     }

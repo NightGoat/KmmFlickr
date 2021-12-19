@@ -13,4 +13,9 @@ interface IDictionary {
     val imageSaveError: String
     val searchIcon: String
     val clearTextButton: String
+    val download: String
+    val back: String
+    val owner: String
+    val height: String
+    val width: String
 }

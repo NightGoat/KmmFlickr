@@ -10,5 +10,5 @@ sealed class MainSideEffect : SideEffect {
     object Empty : MainSideEffect()
     data class Toast(val message: String) : MainSideEffect()
     data class SnackBar(val message: String, val onAction: () -> Unit) : MainSideEffect()
-    data class SaveImage(val photoUi: PhotoUi) : MainSideEffect()
+    data class ShowImageDescription(val photoUi: PhotoUi) : MainSideEffect()
 }

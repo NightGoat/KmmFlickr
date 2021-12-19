@@ -18,18 +18,14 @@ kotlin {
     }
 
     sourceSets {
-        val ktorVersion = "1.6.7"
-        val napierVersion = "2.2.0"
-        val koinVersion = "3.1.4"
-
         val commonMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-core:$ktorVersion")
-                implementation("io.ktor:ktor-client-serialization:$ktorVersion")
-                implementation("org.jetbrains.kotlin:kotlin-reflect:${config.Versions.kotlin}")
-                implementation("io.ktor:ktor-client-logging:$ktorVersion")
-                implementation("io.github.aakira:napier:$napierVersion")
-                implementation("io.insert-koin:koin-core:$koinVersion")
+                implementation(config.Libs.Ktor.core)
+                implementation(config.Libs.Ktor.serialization)
+                implementation(config.Libs.Ktor.logging)
+                implementation(config.Libs.Common.kotlinReflect)
+                implementation(config.Libs.Common.napier)
+                implementation(config.Libs.DI.koinCore)
             }
         }
         val commonTest by getting {
@@ -40,13 +36,13 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-android:$ktorVersion")
+                implementation(config.Libs.Ktor.android)
             }
         }
         val androidTest by getting {
             dependencies {
                 implementation(kotlin("test-junit"))
-                implementation("junit:junit:4.13.2")
+                implementation(config.Libs.Tests.junit)
             }
         }
         val iosX64Main by getting
@@ -67,7 +63,7 @@ kotlin {
             iosArm64Test.dependsOn(this)
             //iosSimulatorArm64Test.dependsOn(this)
             dependencies {
-                implementation("io.ktor:ktor-client-ios:$ktorVersion")
+                implementation(config.Libs.Ktor.iOs)
             }
         }
     }

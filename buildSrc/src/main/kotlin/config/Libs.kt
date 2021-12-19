@@ -7,8 +7,18 @@ object Libs {
     }
 
     object Common {
+        const val kotlinReflect = "org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlin}"
         const val coroutines =
             "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutinesAndroid}"
+        const val napier = "io.github.aakira:napier:${Versions.napier}"
+    }
+
+    object Ktor {
+        const val core = "io.ktor:ktor-client-core:${Versions.ktor}"
+        const val serialization = "io.ktor:ktor-client-serialization:${Versions.ktor}"
+        const val logging = "io.ktor:ktor-client-logging:${Versions.ktor}"
+        const val android = "io.ktor:ktor-client-android:${Versions.ktor}"
+        const val iOs = "io.ktor:ktor-client-ios:${Versions.ktor}"
     }
 
     object Tests {

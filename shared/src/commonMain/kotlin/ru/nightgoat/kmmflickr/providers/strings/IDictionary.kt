@@ -11,4 +11,6 @@ interface IDictionary {
     val retry: String
     val imageSavedSuccessfully: String
     val imageSaveError: String
+    val searchIcon: String
+    val clearTextButton: String
 }

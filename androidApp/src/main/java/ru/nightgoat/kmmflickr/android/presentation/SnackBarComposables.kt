@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import ru.nightgoat.kmmflickr.android.presentation.theme.FlickrTheme
 
 @Composable
 fun SnackBarWithAction(
@@ -53,9 +54,9 @@ fun SnackBarWithActionOnBottom(
 @Preview(showBackground = true)
 @Composable
 private fun SnackBarWithActionOnBottomP() {
+    FlickrTheme {
+        SnackBarWithActionOnBottom("Test", "YES") {
 
-    SnackBarWithActionOnBottom("Test", "YES") {
-
+        }
     }
-
 }

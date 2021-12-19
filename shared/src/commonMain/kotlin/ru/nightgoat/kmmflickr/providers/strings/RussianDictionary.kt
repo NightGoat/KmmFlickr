@@ -22,4 +22,10 @@ object RussianDictionary : IDictionary {
     override val imageSaveError: String by lazy {
         "Произошла ошибка во премя сохранения изображения"
     }
+    override val searchIcon: String by lazy {
+        "Иконка поиска"
+    }
+    override val clearTextButton: String by lazy {
+        "Кнопка очистки текста"
+    }
 }

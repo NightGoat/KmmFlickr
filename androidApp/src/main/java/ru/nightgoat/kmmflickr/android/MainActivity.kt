@@ -8,7 +8,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -20,15 +23,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import ru.nightgoat.kmmflickr.android.presentation.*
+import ru.nightgoat.kmmflickr.android.presentation.theme.FlickrTheme
 import ru.nightgoat.kmmflickr.models.remote.PhotoModel
 import ru.nightgoat.kmmflickr.models.ui.PhotoUi
 import ru.nightgoat.kmmflickr.models.util.Url
-import ru.nightgoat.kmmflickr.providers.strings.EnglishDictionary
-import ru.nightgoat.kmmflickr.providers.strings.IDictionary
 import ru.nightgoat.kmmflickr.providers.strings.StringProvider
+import ru.nightgoat.kmmflickr.providers.strings.stringDictionary
 import java.util.*
-
-var dictionary: IDictionary = EnglishDictionary
 
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
@@ -66,13 +67,17 @@ class MainActivity : ComponentActivity() {
         setLocale()
     }
 
+    /**
+     * Method checks current locale and provides new string dictionary
+     * */
     private fun setLocale() {
         StringProvider.initWithLanguage(Locale.getDefault().language)
-        val newLocale = StringProvider.getLocale()
-        dictionary = newLocale
     }
 }
 
+/**
+ * For easy preview purposes all methods has default realisation
+ * */
 @Composable
 private fun MainComposable(
     state: MainScreenState,
@@ -86,7 +91,7 @@ private fun MainComposable(
     onSaveClick: (PhotoUi) -> Unit = {},
 ) {
     val context = LocalContext.current
-    Scaffold {
+    FlickrTheme {
         Box {
             Column(
                 modifier = Modifier
@@ -96,7 +101,7 @@ private fun MainComposable(
             ) {
                 SearchTextField(
                     textInput = searchTextInput,
-                    hint = dictionary.searchHint,
+                    hint = stringDictionary.searchHint,
                     onTextInputChange = onSearchTextInputChange,
                     onSearchClick = onSearchClick,
                     onClickErase = onClickErase
@@ -106,7 +111,7 @@ private fun MainComposable(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    ReduceState(state, onCardClick)
+                    MainState(state, onCardClick)
                 }
             }
 
@@ -119,7 +124,7 @@ private fun MainComposable(
                 }
                 is MainSideEffect.SnackBar -> SnackBarWithActionOnBottom(
                     text = sideEffect.message,
-                    actionText = dictionary.searchHint,
+                    actionText = stringDictionary.searchHint,
                     onActionClick = sideEffect.onAction
                 )
                 MainSideEffect.Empty -> Unit
@@ -145,24 +150,24 @@ private fun SaveImageDialog(onCancelSave: () -> Unit, onSaveClick: () -> Unit) {
                         .padding(end = defaultPadding),
                     onClick = onCancelSave
                 ) {
-                    Text(dictionary.no)
+                    Text(stringDictionary.no)
                 }
                 Button(
                     modifier = Modifier.weight(1f),
                     onClick = onSaveClick
                 ) {
-                    Text(dictionary.yes)
+                    Text(stringDictionary.yes)
                 }
             }
         },
         text = {
-            Text(dictionary.saveImageQuestion)
+            Text(stringDictionary.saveImageQuestion)
         },
     )
 }
 
 @Composable
-private fun ReduceState(state: MainScreenState, onCardClick: (String) -> Unit) {
+private fun MainState(state: MainScreenState, onCardClick: (String) -> Unit) {
     when (state) {
         is MainScreenState.Loading -> CircularProgressIndicator()
         is MainScreenState.Images -> VerticalGallery(

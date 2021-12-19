@@ -12,4 +12,5 @@ class DownloadImageUseCase(
     }
 }
 
+/** Use case to download photo's bytes */
 interface IDownloadImageUseCase : IUseCase.InOut<PhotoUi, Result<ByteArray>>

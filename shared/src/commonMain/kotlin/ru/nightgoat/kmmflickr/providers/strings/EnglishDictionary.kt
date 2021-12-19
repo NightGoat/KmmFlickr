@@ -22,4 +22,10 @@ object EnglishDictionary : IDictionary {
     override val imageSaveError: String by lazy {
         "An error occurred while saving the image"
     }
+    override val searchIcon: String by lazy {
+        "Search icon"
+    }
+    override val clearTextButton: String by lazy {
+        "Clear text button"
+    }
 }

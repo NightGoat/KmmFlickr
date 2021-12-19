@@ -12,4 +12,5 @@ class GetImagesUseCase(
     }
 }
 
+/** use case calls api and returns ui models */
 interface IGetImagesUseCase : IUseCase.InOut<String, Result<List<PhotoUi>>>

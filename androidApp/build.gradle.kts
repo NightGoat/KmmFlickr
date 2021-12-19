@@ -42,5 +42,5 @@ dependencies {
     implementation(config.Libs.Core.appCompat)
     implementation(config.Libs.Core.material)
     implementation(config.Libs.DI.koinAndroid)
-    api(config.Libs.Common.coroutines)
+    implementation(config.Libs.Common.coroutines)
 }

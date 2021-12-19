@@ -2,7 +2,7 @@ package ru.nightgoat.kmmflickr.models.remote
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import ru.nightgoat.kmmflickr.core.base.IConvertable
+import ru.nightgoat.kmmflickr.core.base.IConvertible
 import ru.nightgoat.kmmflickr.models.ui.PhotoUi
 import ru.nightgoat.kmmflickr.models.util.Url
 
@@ -32,7 +32,9 @@ data class PhotoModel(
     val height: Int? = null,
     @SerialName("width_m")
     val width: Int? = null
-) : IConvertable<PhotoUi> {
+) : IConvertible<PhotoUi> {
+
+    /** we dont need models without url for our gallery*/
     override fun convert() = url?.run {
         PhotoUi(
             model = this@PhotoModel,

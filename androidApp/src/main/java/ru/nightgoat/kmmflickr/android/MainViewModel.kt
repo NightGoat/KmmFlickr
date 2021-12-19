@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.lifecycle.ViewModel
@@ -18,6 +19,7 @@ import ru.nightgoat.kmmflickr.core.constants.MimeTypes
 import ru.nightgoat.kmmflickr.domain.IDownloadImageUseCase
 import ru.nightgoat.kmmflickr.domain.IGetImagesUseCase
 import ru.nightgoat.kmmflickr.models.ui.PhotoUi
+import ru.nightgoat.kmmflickr.providers.strings.stringDictionary
 import java.io.IOException
 
 class MainViewModel : ViewModel(), KoinComponent {
@@ -96,15 +98,15 @@ class MainViewModel : ViewModel(), KoinComponent {
             clearSideEffect()
             downloadImageUseCase(photoUi).onSuccess { byteArray ->
                 val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-                var operationMessage = dictionary.imageSaveError
+                var operationMessage = stringDictionary.imageSaveError
                 kotlin.runCatching {
                     saveBitmap(
                         context = context,
                         bitmap = bitmap,
-                        displayName = "${photoUi.id}.jpg"
+                        displayName = photoUi.id
                     )
                 }.onSuccess {
-                    operationMessage = dictionary.imageSavedSuccessfully
+                    operationMessage = stringDictionary.imageSavedSuccessfully
                 }
                 MainSideEffect.Toast(operationMessage).reduce()
             }
@@ -121,9 +123,11 @@ class MainViewModel : ViewModel(), KoinComponent {
     ): Uri {
 
         val values = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
+            put(MediaStore.MediaColumns.DISPLAY_NAME, "$displayName${mimeType.extension}")
             put(MediaStore.MediaColumns.MIME_TYPE, mimeType.value)
-            put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DCIM)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DCIM)
+            }
         }
 
         var uri: Uri? = null

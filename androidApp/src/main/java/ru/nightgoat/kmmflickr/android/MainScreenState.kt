@@ -1,9 +1,9 @@
 package ru.nightgoat.kmmflickr.android
 
+import ru.nightgoat.kmmflickr.core.base.ScreenState
 import ru.nightgoat.kmmflickr.models.ui.PhotoUi
 
-sealed class MainScreenState {
+sealed class MainScreenState : ScreenState {
     object Loading : MainScreenState()
-    data class Error(val errorMessage: String) : MainScreenState()
-    data class Images(val list: List<PhotoUi> = emptyList()) : MainScreenState()
+    data class Images(val photos: List<PhotoUi> = emptyList()) : MainScreenState()
 }

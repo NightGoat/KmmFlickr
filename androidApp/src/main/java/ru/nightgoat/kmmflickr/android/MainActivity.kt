@@ -1,5 +1,6 @@
 package ru.nightgoat.kmmflickr.android
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -22,12 +23,19 @@ import ru.nightgoat.kmmflickr.android.presentation.*
 import ru.nightgoat.kmmflickr.models.remote.PhotoModel
 import ru.nightgoat.kmmflickr.models.ui.PhotoUi
 import ru.nightgoat.kmmflickr.models.util.Url
+import ru.nightgoat.kmmflickr.providers.strings.EnglishDictionary
+import ru.nightgoat.kmmflickr.providers.strings.IDictionary
+import ru.nightgoat.kmmflickr.providers.strings.StringProvider
+import java.util.*
+
+var dictionary: IDictionary = EnglishDictionary
 
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setLocale()
         setContent {
             val context = LocalContext.current
             val state by viewModel.screenState.collectAsState()
@@ -52,10 +60,21 @@ class MainActivity : ComponentActivity() {
             )
         }
     }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        setLocale()
+    }
+
+    private fun setLocale() {
+        StringProvider.initWithLanguage(Locale.getDefault().language)
+        val newLocale = StringProvider.getLocale()
+        dictionary = newLocale
+    }
 }
 
 @Composable
-fun MainComposable(
+private fun MainComposable(
     state: MainScreenState,
     sideEffect: MainSideEffect,
     searchTextInput: String = "",
@@ -77,7 +96,7 @@ fun MainComposable(
             ) {
                 SearchTextField(
                     textInput = searchTextInput,
-                    hint = "search image",
+                    hint = dictionary.searchHint,
                     onTextInputChange = onSearchTextInputChange,
                     onSearchClick = onSearchClick,
                     onClickErase = onClickErase
@@ -100,7 +119,7 @@ fun MainComposable(
                 }
                 is MainSideEffect.SnackBar -> SnackBarWithActionOnBottom(
                     text = sideEffect.message,
-                    actionText = "RETRY",
+                    actionText = dictionary.searchHint,
                     onActionClick = sideEffect.onAction
                 )
                 MainSideEffect.Empty -> Unit
@@ -126,18 +145,18 @@ private fun SaveImageDialog(onCancelSave: () -> Unit, onSaveClick: () -> Unit) {
                         .padding(end = defaultPadding),
                     onClick = onCancelSave
                 ) {
-                    Text("Нет")
+                    Text(dictionary.no)
                 }
                 Button(
                     modifier = Modifier.weight(1f),
                     onClick = onSaveClick
                 ) {
-                    Text("Да")
+                    Text(dictionary.yes)
                 }
             }
         },
         text = {
-            Text("Сохранить изображение?")
+            Text(dictionary.saveImageQuestion)
         },
     )
 }
@@ -153,7 +172,6 @@ private fun ReduceState(state: MainScreenState, onCardClick: (String) -> Unit) {
     }
 }
 
-
 @Preview
 @Composable
 private fun MainComposablePreview() {
@@ -168,5 +186,5 @@ private fun MainComposablePreview() {
     }
     val state = MainScreenState.Images(photos)
     val sideEffect = MainSideEffect.Empty
-    MainComposable(state = state, sideEffect)
+    MainComposable(state = state, sideEffect = sideEffect)
 }

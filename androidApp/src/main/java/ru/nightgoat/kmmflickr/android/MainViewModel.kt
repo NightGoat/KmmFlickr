@@ -96,7 +96,7 @@ class MainViewModel : ViewModel(), KoinComponent {
             clearSideEffect()
             downloadImageUseCase(photoUi).onSuccess { byteArray ->
                 val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-                var operationMessage = "An error occurred while saving the image"
+                var operationMessage = dictionary.imageSaveError
                 kotlin.runCatching {
                     saveBitmap(
                         context = context,
@@ -104,7 +104,7 @@ class MainViewModel : ViewModel(), KoinComponent {
                         displayName = "${photoUi.id}.jpg"
                     )
                 }.onSuccess {
-                    operationMessage = "Photo saved successfuly!"
+                    operationMessage = dictionary.imageSavedSuccessfully
                 }
                 MainSideEffect.Toast(operationMessage).reduce()
             }

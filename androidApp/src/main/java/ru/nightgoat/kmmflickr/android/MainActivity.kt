@@ -29,6 +29,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val context = LocalContext.current
             val state by viewModel.screenState.collectAsState()
             val sideEffect by viewModel.sideEffect.collectAsState(MainSideEffect.Empty)
             val searchText by viewModel.searchTextInput.collectAsState()
@@ -45,7 +46,9 @@ class MainActivity : ComponentActivity() {
                 onCardClick = viewModel::onCardClick,
                 onClickErase = viewModel::clearTextField,
                 onCancelSave = viewModel::clearSideEffect,
-                onSaveClick = viewModel::clearSideEffect
+                onSaveClick = { photo ->
+                    viewModel.savePhoto(context, photo)
+                }
             )
         }
     }
@@ -61,14 +64,10 @@ fun MainComposable(
     onCardClick: (String) -> Unit = {},
     onClickErase: () -> Unit = {},
     onCancelSave: () -> Unit = {},
-    onSaveClick: () -> Unit = {},
+    onSaveClick: (PhotoUi) -> Unit = {},
 ) {
     val context = LocalContext.current
-    Scaffold(
-        topBar = {
-            TopAppBar(title = { Text("Flickr") })
-        }
-    ) {
+    Scaffold {
         Box {
             Column(
                 modifier = Modifier
@@ -93,7 +92,9 @@ fun MainComposable(
             }
 
             when (sideEffect) {
-                is MainSideEffect.SaveImage -> SaveImageDialog(onCancelSave, onSaveClick)
+                is MainSideEffect.SaveImage -> SaveImageDialog(onCancelSave) {
+                    onSaveClick(sideEffect.photoUi)
+                }
                 is MainSideEffect.Toast -> LaunchedEffect(sideEffect) {
                     Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
                 }
@@ -159,7 +160,7 @@ private fun MainComposablePreview() {
     val photos = List(5) {
         PhotoUi(
             model = PhotoModel(),
-            url = Url(link = "https://upload.wikimedia.org/wikipedia/commons/c/c4/Surrogate%27s_Court_Splendor.jpg"),
+            url = Url(link = "there is no need in this"),
             description = "",
             width = 300,
             height = 400

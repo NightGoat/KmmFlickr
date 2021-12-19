@@ -15,14 +15,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import ru.nightgoat.kmmflickr.android.R
+import ru.nightgoat.kmmflickr.providers.strings.stringDictionary
 
-
+/** Simple searchbar */
 @Composable
 fun SearchTextField(
     modifier: Modifier = Modifier,
     textInput: String,
-    hint: String,
+    hint: String = "",
     onTextInputChange: (String) -> Unit,
     onSearchClick: () -> Unit,
     onClickErase: () -> Unit
@@ -41,21 +43,23 @@ fun SearchTextField(
         leadingIcon = {
             Image(
                 painter = painterResource(id = R.drawable.ic_baseline_search_24),
-                contentDescription = "search",
+                contentDescription = stringDictionary.searchIcon,
                 colorFilter = ColorFilter.tint(Color.Black)
             )
         },
         trailingIcon = {
-            Image(
-                modifier = Modifier
-                    .clickable {
-                        onClickErase()
-                    }
-                    .padding(defaultPadding),
-                painter = painterResource(id = R.drawable.ic_baseline_close_24),
-                contentDescription = "search",
-                colorFilter = ColorFilter.tint(Color.Black)
-            )
+            if (textInput.isNotEmpty()) {
+                Image(
+                    modifier = Modifier
+                        .clickable {
+                            onClickErase()
+                        }
+                        .padding(defaultPadding),
+                    painter = painterResource(id = R.drawable.ic_baseline_close_24),
+                    contentDescription = stringDictionary.clearTextButton,
+                    colorFilter = ColorFilter.tint(Color.Black)
+                )
+            }
         },
         keyboardActions = KeyboardActions(
             onSearch = {
@@ -69,5 +73,17 @@ fun SearchTextField(
         colors = TextFieldDefaults.textFieldColors(
             backgroundColor = Color.White,
         ),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SearchTextFieldPreview() {
+    SearchTextField(
+        textInput = "",
+        hint = "hello world",
+        onTextInputChange = {},
+        onSearchClick = {},
+        onClickErase = {},
     )
 }

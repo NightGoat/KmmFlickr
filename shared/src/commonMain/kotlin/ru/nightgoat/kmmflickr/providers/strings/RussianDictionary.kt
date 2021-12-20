@@ -43,4 +43,10 @@ object RussianDictionary : IDictionary {
     override val width: String by lazy {
         "Ширина"
     }
+    override val pleaseEnterSomething: String by lazy {
+        "Пожалуйста введите что-нибудь"
+    }
+    override val nothingFound: String by lazy {
+        "Ничего не найдено"
+    }
 }

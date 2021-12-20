@@ -43,4 +43,10 @@ object EnglishDictionary : IDictionary {
     override val width: String by lazy {
         "Width"
     }
+    override val pleaseEnterSomething: String by lazy {
+        "Please enter something"
+    }
+    override val nothingFound: String by lazy {
+        "Nothing found!"
+    }
 }

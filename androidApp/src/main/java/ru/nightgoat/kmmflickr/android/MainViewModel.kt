@@ -47,27 +47,41 @@ class MainViewModel : ViewModel(), KoinComponent {
         viewModelScope.launch {
             MainScreenState.Loading.setToScreen()
             val searchText = searchTextInput.value
-            getImagesUseCase(searchText).onSuccess {
-                MainScreenState.Images(it).setToScreen()
-            }.onFailure {
-                MainSideEffect.SnackBar(it.localizedMessage.orEmpty()) {
-                    search()
-                }.reduce()
+            getImagesUseCase(searchText).onSuccess { images ->
+                handleGetImagesSuccess(images)
+            }.onFailure { throwable ->
+                handleGetImagesFailure(throwable)
             }
         }
     }
 
-    fun clearTextField() {
-        changeSearchTextInput("")
+    private fun handleGetImagesFailure(it: Throwable) {
+        MainScreenState.NothingFound.setToScreen()
+        MainSideEffect.SnackBar(it.localizedMessage.orEmpty()) {
+            search()
+            clearSideEffect()
+        }.reduce()
     }
 
-    fun changeSearchTextInput(newText: String) {
+    private fun handleGetImagesSuccess(images: List<PhotoUi>) {
+        if (images.isEmpty()) {
+            MainScreenState.NothingFound.setToScreen()
+        } else {
+            MainScreenState.Images(images).setToScreen()
+        }
+    }
+
+    fun clearTextField() {
+        changeSearchTextInput()
+    }
+
+    fun changeSearchTextInput(newText: String = "") {
         searchTextInput.value = newText
     }
 
     fun onCardClick(cardId: String) {
-        (currentStateValue as? MainScreenState.Images)?.let { it ->
-            val photos = it.photos
+        (currentStateValue as? MainScreenState.Images)?.let { state ->
+            val photos = state.photos
             photos.find { photo ->
                 photo.id == cardId
             }?.let { photo ->

@@ -24,6 +24,8 @@ object Libs {
     object Tests {
         const val junit = "junit:junit:${Versions.junit}"
         const val compose = "androidx.compose.ui:ui-test-junit4:${Versions.compose}"
+        const val ktor = "io.ktor:ktor-client-mock:${Versions.ktor}"
+        const val kotest = "io.kotest:kotest-framework-engine:${Versions.kotest}"
     }
 
     object Compose {

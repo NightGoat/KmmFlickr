@@ -22,4 +22,5 @@ object Versions {
     const val ktor = "1.6.7"
     const val napier = "2.2.0"
     const val koin = "3.1.4"
+    const val kotest = "5.0.3"
 }

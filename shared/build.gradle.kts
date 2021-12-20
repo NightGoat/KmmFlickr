@@ -2,6 +2,7 @@ plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization") version "1.5.0"
     id("com.android.library")
+    id("io.kotest.multiplatform") version "5.0.3"
 }
 
 kotlin {
@@ -32,6 +33,8 @@ kotlin {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
+                implementation(config.Libs.Tests.ktor)
+                implementation(config.Libs.Tests.kotest)
             }
         }
         val androidMain by getting {

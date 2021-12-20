@@ -9,5 +9,6 @@ import ru.nightgoat.kmmflickr.models.ui.PhotoUi
  * */
 sealed class MainScreenState : ScreenState {
     object Loading : MainScreenState()
+    object NothingFound : MainScreenState()
     data class Images(val photos: List<PhotoUi> = emptyList()) : MainScreenState()
 }

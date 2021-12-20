@@ -9,6 +9,7 @@ import ru.nightgoat.kmmflickr.core.constants.FlickrApiConstants
 import ru.nightgoat.kmmflickr.core.extensions.parametersOf
 import ru.nightgoat.kmmflickr.models.remote.FlickrImageModel
 import ru.nightgoat.kmmflickr.models.ui.PhotoUi
+import ru.nightgoat.kmmflickr.providers.strings.stringDictionary
 
 class FlickrImagesRemoteDataSource(
     private val httpClient: HttpClient
@@ -19,22 +20,26 @@ class FlickrImagesRemoteDataSource(
         pages: Int,
         page: Int
     ): FlickrImageModel {
-        return with(FlickrApiConstants) {
-            httpClient.get(BASE_URL) {
-                parametersOf(
-                    API_KEY_PARAM to API_KEY,
-                    METHOD_PARAM to METHOD_VALUE,
-                    TAGS_PARAM to tag,
-                    FORMAT_PARAM to FORMAT_VALUE,
-                    NO_JSON_CALLBACK_PARAM to true.toString(),
-                    CALLBACK_PARAM to true.toString(),
-                    EXTRAS_PARAM to MEDIA_EXTRAS_VALUE,
-                    EXTRAS_PARAM to URL_SQ_EXTRAS_VALUE,
-                    EXTRAS_PARAM to URL_M_EXTRAS_VALUE,
-                    PER_PAGE_PARAM to pages.toString(),
-                    PAGE_PARAM to page.toString()
-                )
+        return if (tag.isNotEmpty()) {
+            with(FlickrApiConstants) {
+                httpClient.get(BASE_URL) {
+                    parametersOf(
+                        API_KEY_PARAM to API_KEY,
+                        METHOD_PARAM to METHOD_VALUE,
+                        TAGS_PARAM to tag,
+                        FORMAT_PARAM to FORMAT_VALUE,
+                        NO_JSON_CALLBACK_PARAM to true.toString(),
+                        CALLBACK_PARAM to true.toString(),
+                        EXTRAS_PARAM to MEDIA_EXTRAS_VALUE,
+                        EXTRAS_PARAM to URL_SQ_EXTRAS_VALUE,
+                        EXTRAS_PARAM to URL_M_EXTRAS_VALUE,
+                        PER_PAGE_PARAM to pages.toString(),
+                        PAGE_PARAM to page.toString()
+                    )
+                }
             }
+        } else {
+            throw IllegalArgumentException(stringDictionary.pleaseEnterSomething)
         }
     }
 
@@ -59,7 +64,7 @@ interface ImagesRemoteDataSource : IRemoteDataSource {
     suspend fun downloadPhoto(photo: PhotoUi): ByteArray
 
     companion object {
-        const val DEFAULT_PAGES_QUANTITY = 20
+        const val DEFAULT_PAGES_QUANTITY = 21
         const val DEFAULT_PAGE = 1
     }
 }

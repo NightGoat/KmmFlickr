@@ -2,6 +2,7 @@ package ru.nightgoat.kmmflickr.providers.http
 
 import io.github.aakira.napier.Napier
 import io.ktor.client.*
+import io.ktor.client.engine.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.features.logging.*
@@ -22,11 +23,13 @@ internal object HttpClientProvider {
         jsonSerializer: () -> JsonSerializer = {
             val json = Json {
                 ignoreUnknownKeys = true
+                prettyPrint = true
             }
             KotlinxSerializer(json)
-        }
+        },
+        customEngine: HttpClientEngine? = null
     ): HttpClient {
-        return HttpClient {
+        val settings: HttpClientConfig<*>.() -> Unit = {
             loggingSettings?.let { settings ->
                 install(Logging) {
                     level = settings.logLevel
@@ -36,7 +39,12 @@ internal object HttpClientProvider {
             install(JsonFeature) {
                 serializer = jsonSerializer()
             }
-        }.also { initLogger() }
+            initLogger()
+        }
+
+        return customEngine?.let { engine ->
+            HttpClient(engine = engine, block = settings)
+        } ?: HttpClient(block = settings)
     }
 }
 

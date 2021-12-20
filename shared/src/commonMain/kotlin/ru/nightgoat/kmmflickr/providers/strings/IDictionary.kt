@@ -18,4 +18,6 @@ interface IDictionary {
     val owner: String
     val height: String
     val width: String
+    val pleaseEnterSomething: String
+    val nothingFound: String
 }

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -143,6 +144,7 @@ private fun MainState(state: MainScreenState, onCardClick: (String) -> Unit) {
             urls = state.photos,
             onPhotoClick = onCardClick
         )
+        is MainScreenState.NothingFound -> Text(stringDictionary.nothingFound)
     }
 }
 

@@ -1,7 +1,14 @@
 package ru.nightgoat.kmmflickr.android
 
+import android.content.ContentValues
+import android.content.Context
 import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -23,11 +30,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
+import io.github.aakira.napier.Napier
 import ru.nightgoat.kmmflickr.android.presentation.*
+import ru.nightgoat.kmmflickr.android.presentation.composables.VerticalGallery
 import ru.nightgoat.kmmflickr.android.presentation.theme.FlickrTheme
+import ru.nightgoat.kmmflickr.core.constants.MimeTypes
 import ru.nightgoat.kmmflickr.models.ui.PhotoUi
 import ru.nightgoat.kmmflickr.providers.strings.StringProvider
 import ru.nightgoat.kmmflickr.providers.strings.stringDictionary
+import java.io.IOException
 import java.util.*
 
 class MainActivity : ComponentActivity() {
@@ -37,14 +48,19 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setLocale()
         setContent {
-            val context = LocalContext.current
-            val state by viewModel.screenState.collectAsState()
-            val sideEffect by viewModel.sideEffect.collectAsState(MainSideEffect.Empty)
-            val searchText by viewModel.searchTextInput.collectAsState()
-            val currentFocus = LocalFocusManager.current
+            MainContent()
+        }
+    }
+
+    @Composable
+    private fun MainContent() {
+        val context = LocalContext.current
+        val state by viewModel.screenState.collectAsState()
+        val searchText by viewModel.searchTextInput.collectAsState()
+        val currentFocus = LocalFocusManager.current
+        FlickrTheme {
             MainComposable(
                 state = state,
-                sideEffect = sideEffect,
                 searchTextInput = searchText,
                 onSearchTextInputChange = viewModel::changeSearchTextInput,
                 onSearchClick = {
@@ -53,11 +69,54 @@ class MainActivity : ComponentActivity() {
                 },
                 onCardClick = viewModel::onCardClick,
                 onClickErase = viewModel::clearTextField,
-                onCancelSave = viewModel::clearSideEffect,
-                onSaveClick = { photo ->
-                    viewModel.savePhoto(context, photo)
-                }
             )
+
+            SideEffects(context)
+        }
+    }
+
+    @Composable
+    private fun SideEffects(context: Context) {
+        when (val sideEffect = viewModel.sideEffect.collectAsState(MainSideEffect.Empty).value) {
+            is MainSideEffect.ShowImageDescription -> {
+                val photo = sideEffect.photoUi
+                ImageDescription(
+                    photoUi = photo,
+                    onCancelSave = viewModel::clearSideEffect,
+                    onSaveClick = {
+                        viewModel.downloadImage(photo)
+                    }
+                )
+            }
+            is MainSideEffect.Toast -> Toast(
+                sideEffect = sideEffect,
+                context = context
+            )
+            is MainSideEffect.SnackBar -> SnackBarWithActionOnBottom(
+                text = sideEffect.message,
+                actionText = stringDictionary.retry,
+                onActionClick = sideEffect.onAction
+            )
+            is MainSideEffect.SaveImageToGallery -> {
+                LaunchedEffect(sideEffect) {
+                    saveImageToGallery(
+                        context = context,
+                        bitmap = sideEffect.bitmap,
+                        displayName = sideEffect.photoUi.id
+                    )
+                }
+            }
+            MainSideEffect.Empty -> Unit
+        }
+    }
+
+    @Composable
+    private fun Toast(
+        sideEffect: MainSideEffect.Toast,
+        context: Context
+    ) {
+        LaunchedEffect(sideEffect) {
+            Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -72,6 +131,53 @@ class MainActivity : ComponentActivity() {
     private fun setLocale() {
         StringProvider.initWithLanguage(Locale.getDefault().language)
     }
+
+    private fun saveImageToGallery(
+        context: Context,
+        bitmap: Bitmap,
+        format: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG,
+        mimeType: MimeTypes = MimeTypes.JPEG,
+        displayName: String
+    ) {
+        var operationMessage = stringDictionary.imageSavedSuccessfully
+        val values = getContentValues(displayName, mimeType)
+        var uri: Uri? = null
+        val contentResolver = context.contentResolver
+        runCatching {
+            with(contentResolver) {
+                insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)?.also {
+                    uri = it // Keep uri reference so it can be removed on failure
+
+                    openOutputStream(it)?.use { stream ->
+                        if (!bitmap.compress(format, 95, stream)) {
+                            throw IOException("Failed to save bitmap.")
+                        }
+                    } ?: throw IOException("Failed to open output stream.")
+                } ?: throw IOException("Failed to create new MediaStore record.")
+            }
+        }.onFailure {
+            uri?.let { orphanUri ->
+                // Don't leave an orphan entry in the MediaStore
+                contentResolver.delete(orphanUri, null, null)
+            }
+            Napier.e("Save image to gallery exception", it)
+            operationMessage = stringDictionary.imageSaveError
+        }
+        Toast.makeText(context, operationMessage, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun getContentValues(
+        displayName: String,
+        mimeType: MimeTypes
+    ): ContentValues {
+        return ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, "$displayName${mimeType.extension}")
+            put(MediaStore.MediaColumns.MIME_TYPE, mimeType.value)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DCIM)
+            }
+        }
+    }
 }
 
 /**
@@ -80,17 +186,12 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun MainComposable(
     state: MainScreenState,
-    sideEffect: MainSideEffect,
     searchTextInput: String = "",
     onSearchTextInputChange: (String) -> Unit = {},
     onSearchClick: () -> Unit = {},
     onCardClick: (String) -> Unit = {},
     onClickErase: () -> Unit = {},
-    onCancelSave: () -> Unit = {},
-    onSaveClick: (PhotoUi) -> Unit = {},
 ) {
-    val context = LocalContext.current
-    FlickrTheme {
         Box {
             Column(
                 modifier = Modifier
@@ -113,27 +214,7 @@ private fun MainComposable(
                     MainState(state, onCardClick)
                 }
             }
-
-            when (sideEffect) {
-                is MainSideEffect.ShowImageDescription -> {
-                    val photo = sideEffect.photoUi
-                    ImageDescription(photo, onCancelSave) {
-                        onSaveClick(photo)
-                    }
-                }
-                is MainSideEffect.Toast -> LaunchedEffect(sideEffect) {
-                    Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
-                }
-                is MainSideEffect.SnackBar -> SnackBarWithActionOnBottom(
-                    text = sideEffect.message,
-                    actionText = stringDictionary.retry,
-                    onActionClick = sideEffect.onAction
-                )
-                MainSideEffect.Empty -> Unit
-            }
         }
-    }
-
 }
 
 @Composable
@@ -155,6 +236,5 @@ private fun MainComposablePreview() {
         PhotoUi.fake
     }
     val state = MainScreenState.Images(photos)
-    val sideEffect = MainSideEffect.Empty
-    MainComposable(state = state, sideEffect = sideEffect)
+    MainComposable(state = state)
 }

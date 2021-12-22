@@ -49,4 +49,7 @@ object EnglishDictionary : IDictionary {
     override val nothingFound: String by lazy {
         "Nothing found!"
     }
+    override val errorLoadingImage: String by lazy {
+        "Error loading image"
+    }
 }

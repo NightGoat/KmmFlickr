@@ -1,22 +1,23 @@
-package ru.nightgoat.kmmflickr.android.presentation
+package ru.nightgoat.kmmflickr.android.presentation.composables
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
-import coil.compose.rememberImagePainter
-import ru.nightgoat.kmmflickr.android.R
+import coil.compose.AsyncImage
+import ru.nightgoat.kmmflickr.android.presentation.defaultMediumPadding
+import ru.nightgoat.kmmflickr.android.presentation.defaultPadding
 import ru.nightgoat.kmmflickr.models.ui.PhotoUi
+import ru.nightgoat.kmmflickr.providers.strings.stringDictionary
 
 
 @Composable
@@ -38,20 +39,18 @@ fun GalleryImage(photo: PhotoUi, onPhotoClick: (String) -> Unit) {
             }
     ) {
         Column {
-            val painter =
-                rememberImagePainter(
-                    data = photo.url.link,
-                    builder = {
-                        placeholder(R.drawable.image_placeholder)
-                    },
-                )
-            Image(
+            AsyncImage(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(photo.aspectRatio),
-                painter = painter,
-                contentScale = ContentScale.FillWidth,
+                    .fillMaxWidth(),
+                model = photo.url.link,
                 contentDescription = photo.description,
+                loading = {
+                    CircularProgressIndicator()
+                },
+                error = {
+                    Text(stringDictionary.errorLoadingImage)
+                },
+                contentScale = ContentScale.FillWidth
             )
             Text(
                 modifier = Modifier.padding(defaultPadding),

@@ -45,10 +45,15 @@ fun GalleryImage(photo: PhotoUi, onPhotoClick: (String) -> Unit) {
                 model = photo.url.link,
                 contentDescription = photo.description,
                 loading = {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(
+                        modifier = Modifier.padding(defaultMediumPadding)
+                    )
                 },
                 error = {
-                    Text(stringDictionary.errorLoadingImage)
+                    Text(
+                        modifier = Modifier.padding(defaultMediumPadding),
+                        text = stringDictionary.errorLoadingImage
+                    )
                 },
                 contentScale = ContentScale.FillWidth
             )

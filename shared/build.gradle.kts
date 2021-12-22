@@ -29,6 +29,7 @@ kotlin {
                 implementation(config.Libs.DI.koinCore)
                 implementation(config.Libs.Common.korimShared)
                 api(config.Libs.Common.coroutines)
+                api("org.orbit-mvi:orbit-core:4.3.0") //TODO
             }
         }
         val commonTest by getting {

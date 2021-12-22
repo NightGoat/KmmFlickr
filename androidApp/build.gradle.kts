@@ -43,4 +43,5 @@ dependencies {
     implementation(config.Libs.DI.koinAndroid)
     implementation(config.Libs.Common.coroutinesAndroid)
     implementation(config.Libs.Common.korimAndroid)
+    implementation("org.orbit-mvi:orbit-viewmodel:4.3.0") //TODO
 }

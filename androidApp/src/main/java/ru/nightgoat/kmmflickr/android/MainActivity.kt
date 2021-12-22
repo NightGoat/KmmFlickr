@@ -36,6 +36,8 @@ import ru.nightgoat.kmmflickr.android.presentation.theme.FlickrTheme
 import ru.nightgoat.kmmflickr.android.presentation.theme.defaultPadding
 import ru.nightgoat.kmmflickr.core.constants.MimeTypes
 import ru.nightgoat.kmmflickr.models.ui.PhotoUi
+import ru.nightgoat.kmmflickr.presentation.MainScreenState
+import ru.nightgoat.kmmflickr.presentation.MainSideEffect
 import ru.nightgoat.kmmflickr.providers.strings.StringProvider
 import ru.nightgoat.kmmflickr.providers.strings.stringDictionary
 import java.io.IOException
@@ -55,7 +57,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun MainContent() {
         val context = LocalContext.current
-        val state by viewModel.screenState.collectAsState()
+        val state by viewModel.container.stateFlow.collectAsState()
         val searchText by viewModel.searchTextInput.collectAsState()
         val currentFocus = LocalFocusManager.current
         FlickrTheme {
@@ -64,7 +66,7 @@ class MainActivity : ComponentActivity() {
                 searchTextInput = searchText,
                 onSearchTextInputChange = viewModel::changeSearchTextInput,
                 onSearchClick = {
-                    viewModel.search()
+                    viewModel.onSearchClick()
                     currentFocus.clearFocus()
                 },
                 onCardClick = viewModel::onCardClick,
@@ -77,7 +79,8 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun SideEffects(context: Context) {
-        when (val sideEffect = viewModel.sideEffect.collectAsState(MainSideEffect.Empty).value) {
+        when (val sideEffect =
+            viewModel.container.sideEffectFlow.collectAsState(MainSideEffect.Empty).value) {
             is MainSideEffect.ShowImageDescription -> {
                 val photo = sideEffect.photoUi
                 ImageDescription(
@@ -95,7 +98,9 @@ class MainActivity : ComponentActivity() {
             is MainSideEffect.SnackBar -> SnackBarWithActionOnBottom(
                 text = sideEffect.message,
                 actionText = stringDictionary.retry,
-                onActionClick = sideEffect.onAction
+                onActionClick = {
+                    viewModel.startSnackBarAction(sideEffect.onAction)
+                }
             )
             is MainSideEffect.SaveImageToGallery -> {
                 LaunchedEffect(sideEffect) {

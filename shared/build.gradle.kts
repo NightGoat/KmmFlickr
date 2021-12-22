@@ -25,7 +25,7 @@ kotlin {
                 implementation(config.Libs.Ktor.serialization)
                 implementation(config.Libs.Ktor.logging)
                 implementation(config.Libs.Common.kotlinReflect)
-                implementation(config.Libs.Common.napier)
+                api(config.Libs.Common.napier)
                 implementation(config.Libs.DI.koinCore)
                 implementation(config.Libs.Common.korimShared)
                 api(config.Libs.Common.coroutines)

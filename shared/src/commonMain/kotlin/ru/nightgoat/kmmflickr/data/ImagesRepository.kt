@@ -1,5 +1,6 @@
 package ru.nightgoat.kmmflickr.data
 
+import com.soywiz.korim.bitmap.Bitmap
 import ru.nightgoat.kmmflickr.core.base.IRemoteRepository
 import ru.nightgoat.kmmflickr.core.base.mapConvertibles
 import ru.nightgoat.kmmflickr.models.ui.PhotoUi
@@ -16,9 +17,15 @@ class ImagesRepository(
         }
     }
 
-    override suspend fun downloadPhoto(photoUi: PhotoUi): Result<ByteArray> {
+    override suspend fun downloadPhotoByteArray(photoUi: PhotoUi): Result<ByteArray> {
         return kotlin.runCatching {
-            remoteDataSource.downloadPhoto(photoUi)
+            remoteDataSource.downloadPhotoByteArray(photoUi)
+        }
+    }
+
+    override suspend fun downloadPhotoBitmap(photoUi: PhotoUi): Result<Bitmap> {
+        return kotlin.runCatching {
+            remoteDataSource.downloadPhotoBitmap(photoUi)
         }
     }
 
@@ -33,5 +40,6 @@ interface IImagesRepository : IRemoteRepository<ImagesRemoteDataSource> {
     suspend fun loadImages(tag: String): Result<List<PhotoUi>>
 
     /** downloads image with link to byte array */
-    suspend fun downloadPhoto(photoUi: PhotoUi): Result<ByteArray>
+    suspend fun downloadPhotoByteArray(photoUi: PhotoUi): Result<ByteArray>
+    suspend fun downloadPhotoBitmap(photoUi: PhotoUi): Result<Bitmap>
 }

@@ -49,4 +49,7 @@ object RussianDictionary : IDictionary {
     override val nothingFound: String by lazy {
         "Ничего не найдено"
     }
+    override val errorLoadingImage: String by lazy {
+        "Произошла ошибка во время загрузки изображения"
+    }
 }

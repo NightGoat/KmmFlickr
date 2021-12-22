@@ -1,12 +1,5 @@
 package ru.nightgoat.kmmflickr.android
 
-import android.content.ContentValues
-import android.content.Context
-import android.graphics.Bitmap
-import android.net.Uri
-import android.os.Build
-import android.os.Environment
-import android.provider.MediaStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.soywiz.korim.format.toAndroidBitmap
@@ -15,12 +8,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import ru.nightgoat.kmmflickr.core.constants.MimeTypes
 import ru.nightgoat.kmmflickr.domain.IDownloadImageUseCase
 import ru.nightgoat.kmmflickr.domain.IGetImagesUseCase
 import ru.nightgoat.kmmflickr.models.ui.PhotoUi
-import ru.nightgoat.kmmflickr.providers.strings.stringDictionary
-import java.io.IOException
 
 class MainViewModel : ViewModel(), KoinComponent {
 
@@ -33,7 +23,7 @@ class MainViewModel : ViewModel(), KoinComponent {
     val getImagesUseCase: IGetImagesUseCase by inject()
     val downloadImageUseCase: IDownloadImageUseCase by inject()
 
-    val searchTextInput = MutableStateFlow("Electrolux")
+    val searchTextInput = MutableStateFlow(DEFAULT_SEARCH_TEXT)
 
     init {
         startLoading()
@@ -80,7 +70,8 @@ class MainViewModel : ViewModel(), KoinComponent {
     }
 
     fun onCardClick(cardId: String) {
-        (currentStateValue as? MainScreenState.Images)?.let { state ->
+        val state = currentStateValue
+        if (state is MainScreenState.Images) {
             val photos = state.photos
             photos.find { photo ->
                 photo.id == cardId
@@ -104,68 +95,21 @@ class MainViewModel : ViewModel(), KoinComponent {
         screenState.value = this
     }
 
-    fun savePhoto(
-        context: Context,
-        photoUi: PhotoUi
-    ) {
+    fun downloadImage(photoUi: PhotoUi) {
         viewModelScope.launch {
             clearSideEffect()
-            downloadImageUseCase(photoUi).onSuccess {
-                val bitmap = it.toAndroidBitmap()
-                var operationMessage = stringDictionary.imageSaveError
-                kotlin.runCatching {
-                    saveBitmap(
-                        context = context,
-                        bitmap = bitmap,
-                        displayName = photoUi.id
-                    )
-                }.onSuccess {
-                    operationMessage = stringDictionary.imageSavedSuccessfully
-                }
-                MainSideEffect.Toast(operationMessage).reduce()
+            downloadImageUseCase(photoUi).onSuccess { korimBitmap ->
+                val bitmap = korimBitmap.toAndroidBitmap()
+                MainSideEffect.SaveImageToGallery(
+                    bitmap = bitmap,
+                    photoUi = photoUi
+                ).reduce()
             }
         }
     }
 
-    @Throws(IOException::class)
-    fun saveBitmap(
-        context: Context,
-        bitmap: Bitmap,
-        format: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG,
-        mimeType: MimeTypes = MimeTypes.JPEG,
-        displayName: String
-    ): Uri {
 
-        val values = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, "$displayName${mimeType.extension}")
-            put(MediaStore.MediaColumns.MIME_TYPE, mimeType.value)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DCIM)
-            }
-        }
-
-        var uri: Uri? = null
-
-        return runCatching {
-            with(context.contentResolver) {
-                insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)?.also {
-                    uri = it // Keep uri reference so it can be removed on failure
-
-                    openOutputStream(it)?.use { stream ->
-                        if (!bitmap.compress(format, 95, stream))
-                            throw IOException("Failed to save bitmap.")
-                    } ?: throw IOException("Failed to open output stream.")
-
-                } ?: throw IOException("Failed to create new MediaStore record.")
-            }
-        }.getOrElse {
-            uri?.let { orphanUri ->
-                // Don't leave an orphan entry in the MediaStore
-                context.contentResolver.delete(orphanUri, null, null)
-            }
-
-            throw it
-        }
+    companion object {
+        const val DEFAULT_SEARCH_TEXT = "Electrolux"
     }
-
 }

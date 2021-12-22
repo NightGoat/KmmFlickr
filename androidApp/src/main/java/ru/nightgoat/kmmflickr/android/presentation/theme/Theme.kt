@@ -1,6 +1,5 @@
 package ru.nightgoat.kmmflickr.android.presentation.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
@@ -15,10 +14,7 @@ private val LightColorPalette = lightColors(
 )
 
 @Composable
-fun FlickrTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable() () -> Unit
-) {
+fun FlickrTheme(content: @Composable () -> Unit) {
     MaterialTheme(
         colors = LightColorPalette,
         typography = Typography,

@@ -31,9 +31,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import io.github.aakira.napier.Napier
-import ru.nightgoat.kmmflickr.android.presentation.*
-import ru.nightgoat.kmmflickr.android.presentation.composables.VerticalGallery
+import ru.nightgoat.kmmflickr.android.presentation.composables.*
 import ru.nightgoat.kmmflickr.android.presentation.theme.FlickrTheme
+import ru.nightgoat.kmmflickr.android.presentation.theme.defaultPadding
 import ru.nightgoat.kmmflickr.core.constants.MimeTypes
 import ru.nightgoat.kmmflickr.models.ui.PhotoUi
 import ru.nightgoat.kmmflickr.providers.strings.StringProvider

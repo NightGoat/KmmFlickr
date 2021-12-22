@@ -20,7 +20,7 @@ import kotlin.test.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class CommonTests {
 
-    lateinit var okSource: ImagesRemoteDataSource
+    private lateinit var okSource: ImagesRemoteDataSource
 
     @BeforeTest
     fun initSource() {

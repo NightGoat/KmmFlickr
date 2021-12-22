@@ -15,6 +15,9 @@ import ru.nightgoat.kmmflickr.providers.http.HttpClientProvider
 
 private const val jsonHttpClient = "json"
 
+/**
+ * Don't believe IDE! Casts is really needed for koin!
+ * */
 val imageModules = module {
     single {
         GetImagesUseCase(get()) as IGetImagesUseCase

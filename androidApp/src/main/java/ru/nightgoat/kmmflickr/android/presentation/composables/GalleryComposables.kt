@@ -14,8 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
-import ru.nightgoat.kmmflickr.android.presentation.defaultMediumPadding
-import ru.nightgoat.kmmflickr.android.presentation.defaultPadding
+import ru.nightgoat.kmmflickr.android.presentation.theme.defaultMediumPadding
+import ru.nightgoat.kmmflickr.android.presentation.theme.defaultPadding
 import ru.nightgoat.kmmflickr.models.ui.PhotoUi
 import ru.nightgoat.kmmflickr.providers.strings.stringDictionary
 

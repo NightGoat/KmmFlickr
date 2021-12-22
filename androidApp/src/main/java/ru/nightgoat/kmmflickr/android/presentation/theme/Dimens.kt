@@ -1,4 +1,4 @@
-package ru.nightgoat.kmmflickr.android.presentation
+package ru.nightgoat.kmmflickr.android.presentation.theme
 
 import androidx.compose.ui.unit.dp
 

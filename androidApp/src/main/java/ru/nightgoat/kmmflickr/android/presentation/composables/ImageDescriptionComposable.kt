@@ -1,4 +1,4 @@
-package ru.nightgoat.kmmflickr.android.presentation
+package ru.nightgoat.kmmflickr.android.presentation.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -12,8 +12,9 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import ru.nightgoat.kmmflickr.android.R
-import ru.nightgoat.kmmflickr.android.presentation.composables.ButtonText
 import ru.nightgoat.kmmflickr.android.presentation.theme.FlickrTheme
+import ru.nightgoat.kmmflickr.android.presentation.theme.defaultButtonSize
+import ru.nightgoat.kmmflickr.android.presentation.theme.defaultPadding
 import ru.nightgoat.kmmflickr.android.presentation.util.ImageData
 import ru.nightgoat.kmmflickr.models.ui.PhotoUi
 import ru.nightgoat.kmmflickr.providers.strings.stringDictionary

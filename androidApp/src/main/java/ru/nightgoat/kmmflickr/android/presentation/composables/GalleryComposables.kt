@@ -17,6 +17,7 @@ import coil.compose.AsyncImage
 import ru.nightgoat.kmmflickr.android.presentation.defaultMediumPadding
 import ru.nightgoat.kmmflickr.android.presentation.defaultPadding
 import ru.nightgoat.kmmflickr.models.ui.PhotoUi
+import ru.nightgoat.kmmflickr.providers.strings.stringDictionary
 
 
 @Composable
@@ -47,7 +48,7 @@ fun GalleryImage(photo: PhotoUi, onPhotoClick: (String) -> Unit) {
                     CircularProgressIndicator()
                 },
                 error = {
-                    Text("IMAGE DOWNLOAD ERROR") //TODO
+                    Text(stringDictionary.errorLoadingImage)
                 },
                 contentScale = ContentScale.FillWidth
             )

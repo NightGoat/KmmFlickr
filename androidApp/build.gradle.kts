@@ -38,9 +38,9 @@ dependencies {
     implementation(config.Libs.Compose.viewModel)
     implementation(config.Libs.Compose.runtime)
     implementation(config.Libs.Compose.coil)
-
     implementation(config.Libs.Core.appCompat)
     implementation(config.Libs.Core.material)
     implementation(config.Libs.DI.koinAndroid)
-    implementation(config.Libs.Common.coroutines)
+    implementation(config.Libs.Common.coroutinesAndroid)
+    implementation(config.Libs.Common.korimAndroid)
 }

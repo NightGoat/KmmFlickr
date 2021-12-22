@@ -3,13 +3,13 @@ package ru.nightgoat.kmmflickr.android
 import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.soywiz.korim.format.toAndroidBitmap
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -110,8 +110,8 @@ class MainViewModel : ViewModel(), KoinComponent {
     ) {
         viewModelScope.launch {
             clearSideEffect()
-            downloadImageUseCase(photoUi).onSuccess { byteArray ->
-                val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+            downloadImageUseCase(photoUi).onSuccess {
+                val bitmap = it.toAndroidBitmap()
                 var operationMessage = stringDictionary.imageSaveError
                 kotlin.runCatching {
                     saveBitmap(

@@ -27,6 +27,8 @@ kotlin {
                 implementation(config.Libs.Common.kotlinReflect)
                 implementation(config.Libs.Common.napier)
                 implementation(config.Libs.DI.koinCore)
+                implementation(config.Libs.Common.korimShared)
+                api(config.Libs.Common.coroutines)
             }
         }
         val commonTest by getting {
@@ -35,11 +37,13 @@ kotlin {
                 implementation(kotlin("test-annotations-common"))
                 implementation(config.Libs.Tests.ktor)
                 implementation(config.Libs.Tests.kotest)
+                implementation(config.Libs.Tests.coroutines)
             }
         }
         val androidMain by getting {
             dependencies {
                 implementation(config.Libs.Ktor.android)
+                implementation(config.Libs.Common.korimAndroid)
             }
         }
         val androidTest by getting {

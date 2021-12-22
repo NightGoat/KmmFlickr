@@ -1,5 +1,8 @@
 package ru.nightgoat.kmmflickr.data
 
+import com.soywiz.korim.bitmap.Bitmap
+import com.soywiz.korim.format.readBitmap
+import com.soywiz.korio.file.std.VfsFileFromData
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -43,9 +46,14 @@ class FlickrImagesRemoteDataSource(
         }
     }
 
-    override suspend fun downloadPhoto(photo: PhotoUi): ByteArray {
+    override suspend fun downloadPhotoByteArray(photo: PhotoUi): ByteArray {
         val response: HttpResponse = httpClient.get(photo.url.link)
         return response.receive()
+    }
+
+    override suspend fun downloadPhotoBitmap(photo: PhotoUi): Bitmap {
+        val bytes = downloadPhotoByteArray(photo)
+        return VfsFileFromData(bytes).readBitmap()
     }
 }
 
@@ -61,7 +69,10 @@ interface ImagesRemoteDataSource : IRemoteDataSource {
     ): FlickrImageModel
 
     @Throws(Exception::class)
-    suspend fun downloadPhoto(photo: PhotoUi): ByteArray
+    suspend fun downloadPhotoByteArray(photo: PhotoUi): ByteArray
+
+    @Throws(Exception::class)
+    suspend fun downloadPhotoBitmap(photo: PhotoUi): Bitmap
 
     companion object {
         const val DEFAULT_PAGES_QUANTITY = 21

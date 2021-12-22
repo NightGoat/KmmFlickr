@@ -5,7 +5,7 @@ object Versions {
     const val gradle = "7.0.3"
     const val kotlin = "1.5.31"
 
-    const val coroutinesAndroid = "1.5.1"
+    const val coroutines = "1.6.0-RC3"
 
     /* test */
     const val junit = "4.13.2"
@@ -23,4 +23,5 @@ object Versions {
     const val napier = "2.2.0"
     const val koin = "3.1.4"
     const val kotest = "5.0.3"
+    const val korim = "2.4.9"
 }

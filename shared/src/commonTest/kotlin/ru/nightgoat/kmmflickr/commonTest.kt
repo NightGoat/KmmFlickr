@@ -8,7 +8,8 @@ import io.ktor.client.engine.mock.*
 import io.ktor.client.features.*
 import io.ktor.http.*
 import io.ktor.utils.io.*
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import ru.nightgoat.kmmflickr.data.FlickrImagesRemoteDataSource
 import ru.nightgoat.kmmflickr.data.ImagesRemoteDataSource
 import ru.nightgoat.kmmflickr.models.ui.PhotoUi
@@ -16,6 +17,7 @@ import ru.nightgoat.kmmflickr.providers.http.HttpClientProvider
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class CommonTests {
 
     lateinit var okSource: ImagesRemoteDataSource
@@ -43,21 +45,21 @@ class CommonTests {
 
     @Test
     fun dataSource_test_getPhotos_EMPTY_TAG_EXCEPTION() {
-        runBlocking {
+        runTest {
             shouldThrow<IllegalArgumentException> { okSource.getPhotos("") }
         }
     }
 
     @Test
     fun dataSource_test_getPhotos_EMPTY_TAG_NO_EXCEPTION() {
-        runBlocking {
+        runTest {
             shouldNotThrow<IllegalArgumentException> { okSource.getPhotos(tag) }
         }
     }
 
     @Test
     fun dataSource_test_getPhotos_OK_ANSWER_NOT_NULL() {
-        runBlocking {
+        runTest {
             val response = okSource.getPhotos(tag)
             response.photos?.photos?.firstOrNull() shouldNotBe null
         }
@@ -65,7 +67,7 @@ class CommonTests {
 
     @Test
     fun dataSource_test_getPhotos_OK_ANSWER_EQUALS() {
-        runBlocking {
+        runTest {
             val response = okSource.getPhotos(tag)
             response.photos?.photos?.firstOrNull()?.id shouldBe "51713985825"
         }
@@ -73,7 +75,7 @@ class CommonTests {
 
     @Test
     fun dataSource_test_getPhotos_NOT_FOUND_STATUS_THROWS() {
-        runBlocking {
+        runTest {
             val badDataSource = getDataSource(EMPTY_RESPONSE, NOT_FOUND_STATUS)
             shouldThrow<ClientRequestException> { badDataSource.getPhotos(tag) }
         }
@@ -81,7 +83,7 @@ class CommonTests {
 
     @Test
     fun dataSource_test_getPhotos_EMPTY_RESPONSE() {
-        runBlocking {
+        runTest {
             val badDataSource = getDataSource(EMPTY_RESPONSE)
             shouldThrow<RuntimeException> { badDataSource.getPhotos(tag) }
         }
@@ -89,7 +91,7 @@ class CommonTests {
 
     @Test
     fun dataSource_test_getPhotos_EMPTY_RESPONSE_2() {
-        runBlocking {
+        runTest {
             val badDataSource = getDataSource(EMPTY_JSON_RESPONSE)
             val response = badDataSource.getPhotos(tag)
             response.stat shouldBe null
@@ -98,9 +100,9 @@ class CommonTests {
 
     @Test
     fun dataSource_test_downloadPhoto_NOT_EMPTY() {
-        runBlocking {
+        runTest {
             val badDataSource = getDataSource(EMPTY_JSON_RESPONSE)
-            val response = badDataSource.downloadPhoto(PhotoUi.fake)
+            val response = badDataSource.downloadPhotoByteArray(PhotoUi.fake)
             response.isNotEmpty() shouldBe true
         }
     }

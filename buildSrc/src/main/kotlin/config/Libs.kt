@@ -8,9 +8,13 @@ object Libs {
 
     object Common {
         const val kotlinReflect = "org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlin}"
+        const val coroutinesAndroid =
+            "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutines}"
         const val coroutines =
-            "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutinesAndroid}"
+            "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
         const val napier = "io.github.aakira:napier:${Versions.napier}"
+        const val korimShared = "com.soywiz.korlibs.korim:korim:${Versions.korim}"
+        const val korimAndroid = "com.soywiz.korlibs.korim:korim-android:${Versions.korim}"
     }
 
     object Ktor {
@@ -26,6 +30,8 @@ object Libs {
         const val compose = "androidx.compose.ui:ui-test-junit4:${Versions.compose}"
         const val ktor = "io.ktor:ktor-client-mock:${Versions.ktor}"
         const val kotest = "io.kotest:kotest-framework-engine:${Versions.kotest}"
+        const val coroutines =
+            "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
     }
 
     object Compose {

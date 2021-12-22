@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.soywiz.korim.format.toAndroidBitmap
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -14,16 +16,20 @@ import ru.nightgoat.kmmflickr.models.ui.PhotoUi
 
 class MainViewModel : ViewModel(), KoinComponent {
 
-    val screenState = MutableStateFlow<MainScreenState>(MainScreenState.Loading)
-    val sideEffect = MutableSharedFlow<MainSideEffect>(replay = 1, extraBufferCapacity = 1)
+    val getImagesUseCase: IGetImagesUseCase by inject()
+    val downloadImageUseCase: IDownloadImageUseCase by inject()
+
+    private val _screenState = MutableStateFlow<MainScreenState>(MainScreenState.Loading)
+    val screenState = _screenState.asStateFlow()
 
     private val currentStateValue
         get() = screenState.value
 
-    val getImagesUseCase: IGetImagesUseCase by inject()
-    val downloadImageUseCase: IDownloadImageUseCase by inject()
+    private val _sideEffect = MutableSharedFlow<MainSideEffect>(replay = 1, extraBufferCapacity = 1)
+    val sideEffect = _sideEffect.asSharedFlow()
 
-    val searchTextInput = MutableStateFlow(DEFAULT_SEARCH_TEXT)
+    private val _searchTextInput = MutableStateFlow(DEFAULT_SEARCH_TEXT)
+    val searchTextInput = _searchTextInput.asStateFlow()
 
     init {
         startLoading()
@@ -66,7 +72,7 @@ class MainViewModel : ViewModel(), KoinComponent {
     }
 
     fun changeSearchTextInput(newText: String = "") {
-        searchTextInput.value = newText
+        _searchTextInput.value = newText
     }
 
     fun onCardClick(cardId: String) {
@@ -81,9 +87,9 @@ class MainViewModel : ViewModel(), KoinComponent {
         }
     }
 
-    private fun MainSideEffect.reduce() {
+    private inline fun MainSideEffect.reduce() {
         viewModelScope.launch {
-            sideEffect.emit(this@reduce)
+            _sideEffect.emit(this@reduce)
         }
     }
 
@@ -92,7 +98,7 @@ class MainViewModel : ViewModel(), KoinComponent {
     }
 
     private fun MainScreenState.setToScreen() {
-        screenState.value = this
+        _screenState.value = this
     }
 
     fun downloadImage(photoUi: PhotoUi) {

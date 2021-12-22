@@ -15,7 +15,7 @@ object StringProvider {
     private const val RUSSIAN_LOCALE_KEY = "ru"
     private const val ENGLISH_LOCALE_KEY = "en"
 
-    var currentLanguage: String = ENGLISH_LOCALE_KEY
+    private var currentLanguage: String = ENGLISH_LOCALE_KEY
     val dictionary: IDictionary
         get() = when (currentLanguage) {
             RUSSIAN_LOCALE_KEY -> RussianDictionary

@@ -1,4 +1,4 @@
-package ru.nightgoat.kmmflickr.android.presentation
+package ru.nightgoat.kmmflickr.android.presentation.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -17,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import ru.nightgoat.kmmflickr.android.R
+import ru.nightgoat.kmmflickr.android.presentation.theme.defaultPadding
 import ru.nightgoat.kmmflickr.providers.strings.stringDictionary
 
 /** Simple searchbar */

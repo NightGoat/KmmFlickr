@@ -1,4 +1,4 @@
-package ru.nightgoat.kmmflickr.android.presentation
+package ru.nightgoat.kmmflickr.android.presentation.composables
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import ru.nightgoat.kmmflickr.android.presentation.theme.FlickrTheme
+import ru.nightgoat.kmmflickr.android.presentation.theme.defaultPadding
 
 @Composable
 fun SnackBarWithAction(

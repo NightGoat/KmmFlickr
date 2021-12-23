@@ -26,6 +26,6 @@ class MainViewModel : ViewModel(), IBaseViewModel by BaseViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        superVisorJob.cancel()
+        clearJobsAndSubscriptions()
     }
 }

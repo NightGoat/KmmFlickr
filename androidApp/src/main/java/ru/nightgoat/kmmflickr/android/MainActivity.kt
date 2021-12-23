@@ -99,7 +99,7 @@ class MainActivity : ComponentActivity() {
                 text = sideEffect.message,
                 actionText = stringDictionary.retry,
                 onActionClick = {
-                    viewModel.startSnackBarAction(sideEffect.onAction)
+                    sideEffect.onAction()
                 }
             )
             is MainSideEffect.SaveImageToGallery -> {

@@ -15,11 +15,13 @@ import org.orbitmvi.orbit.syntax.simple.reduce
 import ru.nightgoat.kmmflickr.domain.IDownloadImageUseCase
 import ru.nightgoat.kmmflickr.domain.IGetImagesUseCase
 import ru.nightgoat.kmmflickr.models.ui.PhotoUi
+import ru.nightgoat.kmmflickr.providers.strings.stringDictionary
 import kotlin.coroutines.CoroutineContext
 
 class BaseViewModel : IBaseViewModel {
 
-    override val superVisorJob = SupervisorJob()
+    private val superVisorJob = SupervisorJob()
+    private var snackBarJob: Job? = null
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Default + superVisorJob
@@ -27,7 +29,7 @@ class BaseViewModel : IBaseViewModel {
     override val container: Container<MainScreenState, MainSideEffect> =
         container(MainScreenState.Loading) {
             launch {
-                startLoading()
+                searchImagesForDefaultTag()
             }
         }
 
@@ -37,44 +39,58 @@ class BaseViewModel : IBaseViewModel {
     private val currentStateValue
         get() = container.stateFlow.value
 
-    private val _searchTextInput = MutableStateFlow(DEFAULT_SEARCH_TEXT)
+    private val _searchTextInput = MutableStateFlow(DEFAULT_SEARCH_TAG)
     override val searchTextInput = _searchTextInput.asStateFlow()
 
     private val previousSearchedText = MutableStateFlow("")
 
-    private suspend fun startLoading() {
-        search()
+    private suspend fun searchImagesForDefaultTag() {
+        searchTag()
     }
 
-    override suspend fun search() {
-        val searchText = searchTextInput.value
+    override suspend fun searchTag(tagToSearch: String?) {
+        val searchText = tagToSearch ?: searchTextInput.value
         val previousSearch = previousSearchedText.value
-        if (searchText != previousSearch) {
-            MainScreenState.Loading.setToScreen()
-            getImagesUseCase(searchText).onSuccess { images ->
-                handleGetImagesSuccess(images)
-            }.onFailure { throwable ->
-                handleGetImagesFailure(throwable)
-            }
+        when {
+            searchText.isEmpty() -> MainSideEffect.Toast(stringDictionary.pleaseEnterSomething)
+                .reduce()
+            searchText != previousSearch -> startLoadingImages(searchText)
         }
     }
 
-    private suspend fun handleGetImagesFailure(it: Throwable) {
+    private suspend fun startLoadingImages(searchText: String) {
+        MainScreenState.Loading.setToScreen()
+        getImagesUseCase(searchText).onSuccess { images ->
+            handleGetImagesSuccess(images)
+        }.onFailure { throwable ->
+            handleGetImagesFailure(throwable)
+        }
+    }
+
+    private fun handleGetImagesFailure(it: Throwable) {
         MainScreenState.NothingFound.setToScreen()
         MainSideEffect.SnackBar(it.message.orEmpty()) {
-            search()
-            clearSideEffect()
+            snackBarJob?.cancel()
+            snackBarJob = launch {
+                searchTag()
+                clearSideEffect()
+            }
         }.reduce()
     }
 
     private fun handleGetImagesSuccess(images: List<PhotoUi>) {
-        val oldValue = _searchTextInput.value
-        previousSearchedText.value = oldValue //TODO move to another method
+        saveSearchRequest()
         if (images.isEmpty()) {
             MainScreenState.NothingFound.setToScreen()
         } else {
             MainScreenState.Images(images).setToScreen()
         }
+    }
+
+    /** Saves text input to previous searched text field */
+    private fun saveSearchRequest() {
+        val oldValue = _searchTextInput.value
+        previousSearchedText.value = oldValue
     }
 
     override fun clearTextField() {
@@ -117,34 +133,35 @@ class BaseViewModel : IBaseViewModel {
 
     override fun onSearchClick() {
         launch {
-            search()
+            searchTag()
         }
     }
 
-    override fun startSnackBarAction(action: suspend () -> Unit) {
-        launch {
-            action()
-        }
+    override fun clearJobsAndSubscriptions() {
+        superVisorJob.cancel()
+        snackBarJob?.cancel()
+        snackBarJob == null
     }
 
     companion object {
-        const val DEFAULT_SEARCH_TEXT = "Electrolux"
+        const val DEFAULT_SEARCH_TAG = "Electrolux"
     }
 }
 
 interface IBaseViewModel : ContainerHost<MainScreenState, MainSideEffect>, KoinComponent,
     CoroutineScope {
-    val superVisorJob: Job
     override val container: Container<MainScreenState, MainSideEffect>
     val downloadImageUseCase: IDownloadImageUseCase
     val searchTextInput: StateFlow<String>
-    fun startSnackBarAction(action: suspend () -> Unit)
     fun onSearchClick()
     fun clearSideEffect()
     fun onCardClick(cardId: String)
     fun changeSearchTextInput(newText: String = "")
     fun clearTextField()
-    suspend fun search()
+    suspend fun searchTag(tagToSearch: String? = null)
     fun MainSideEffect.reduce()
     fun MainScreenState.setToScreen()
+
+    /** There you should cancel all your flow subscriptions and etc when you don't need them */
+    fun clearJobsAndSubscriptions()
 }

@@ -1,4 +1,4 @@
-package ru.nightgoat.kmmflickr.android
+package ru.nightgoat.kmmflickr.presentation
 
 import android.graphics.Bitmap
 import ru.nightgoat.kmmflickr.core.base.SideEffect

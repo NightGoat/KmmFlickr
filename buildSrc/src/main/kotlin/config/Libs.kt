@@ -4,6 +4,7 @@ object Libs {
     object Core {
         const val appCompat = "androidx.appcompat:appcompat:1.3.1"
         const val material = "com.google.android.material:material:1.4.0"
+        const val orbit = "org.orbit-mvi:orbit-core:${Versions.orbit}"
     }
 
     object Common {

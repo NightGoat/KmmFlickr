@@ -52,4 +52,7 @@ object EnglishDictionary : IDictionary {
     override val errorLoadingImage: String by lazy {
         "Error loading image"
     }
+    override val serverError: String by lazy {
+        "Server error"
+    }
 }

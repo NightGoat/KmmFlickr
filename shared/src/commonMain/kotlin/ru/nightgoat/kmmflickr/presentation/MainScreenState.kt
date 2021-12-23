@@ -1,4 +1,4 @@
-package ru.nightgoat.kmmflickr.android
+package ru.nightgoat.kmmflickr.presentation
 
 import ru.nightgoat.kmmflickr.core.base.ScreenState
 import ru.nightgoat.kmmflickr.models.ui.PhotoUi

@@ -52,4 +52,7 @@ object RussianDictionary : IDictionary {
     override val errorLoadingImage: String by lazy {
         "Произошла ошибка во время загрузки изображения"
     }
+    override val serverError: String by lazy {
+        "Ошибка сервера"
+    }
 }

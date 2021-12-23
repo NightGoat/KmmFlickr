@@ -69,7 +69,7 @@ class BaseViewModel : IBaseViewModel {
 
     private fun handleGetImagesFailure(it: Throwable) {
         MainScreenState.NothingFound.setToScreen()
-        MainSideEffect.SnackBar(it.message.orEmpty()) {
+        MainSideEffect.SnackBar(stringDictionary.serverError) {
             snackBarJob?.cancel()
             snackBarJob = launch {
                 searchTag()
@@ -140,7 +140,7 @@ class BaseViewModel : IBaseViewModel {
     override fun clearJobsAndSubscriptions() {
         superVisorJob.cancel()
         snackBarJob?.cancel()
-        snackBarJob == null
+        snackBarJob = null
     }
 
     companion object {
@@ -150,14 +150,27 @@ class BaseViewModel : IBaseViewModel {
 
 interface IBaseViewModel : ContainerHost<MainScreenState, MainSideEffect>, KoinComponent,
     CoroutineScope {
+    /** main state and sideeffect holder */
     override val container: Container<MainScreenState, MainSideEffect>
+
+    /** downloads image and returns it in Bitmap (korim, not android) */
     val downloadImageUseCase: IDownloadImageUseCase
+
+    /** shows user input in search field */
     val searchTextInput: StateFlow<String>
+
+    /** reacts on user keyboard click Search: searches current tag in input field */
     fun onSearchClick()
     fun clearSideEffect()
+
+    /** reacts on user card click: shows photo description with download button */
     fun onCardClick(cardId: String)
+
+    /** utility method for setting text input in MutableStateFlow */
     fun changeSearchTextInput(newText: String = "")
     fun clearTextField()
+
+    /** calls api and sets state */
     suspend fun searchTag(tagToSearch: String? = null)
     fun MainSideEffect.reduce()
     fun MainScreenState.setToScreen()

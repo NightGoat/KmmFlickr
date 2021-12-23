@@ -57,4 +57,7 @@ interface IDictionary {
 
     /** @see EnglishDictionary.imageSaveError */
     val imageSaveError: String
+
+    /** @see EnglishDictionary.serverError */
+    val serverError: String
 }

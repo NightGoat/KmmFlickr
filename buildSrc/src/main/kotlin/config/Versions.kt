@@ -24,4 +24,6 @@ object Versions {
     const val koin = "3.1.4"
     const val kotest = "5.0.3"
     const val korim = "2.4.9"
+
+    const val orbit = "4.3.0"
 }

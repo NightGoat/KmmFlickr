@@ -14,7 +14,18 @@ data class PhotoUi(
     val id
         get() = model.id.orEmpty()
 
+    /** calculated image's aspect ratio. If height is == 0, returns 3 : 4 */
+    val aspectRatio: Float
+        get() {
+            return if (height != 0) {
+                width.toFloat() / height
+            } else {
+                DEFAULT_ASPECT_RATIO
+            }
+        }
+
     companion object {
+        const val DEFAULT_ASPECT_RATIO = 0.75f
         val fake = PhotoUi(
             model = PhotoModel(
                 id = "123"
